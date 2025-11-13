@@ -1,0 +1,9 @@
+<div class="tree-item-container">
+    <div class="tree-icon-container">
+        <i *ngIf="hasChildren" class="fas fa-chevron-right" [ngClass]="{'expanded': expanded}"></i>
+    </div>
+    <a class="nav-item" (click)="toggle()">{{ name }}</a>
+</div>
+<div class="sub-menu" [ngClass]="{'expanded': expanded}">
+    <ul><ng-content></ng-content></ul>
+</div>

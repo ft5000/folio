@@ -59,6 +59,7 @@ export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
                     canvas.parent(this.elementRef.nativeElement.querySelector('.p5-container'));
                     p.textFont('Consolas');
                     p.textSize(9);
+                    // p.noiseSeed(5);
                 };
 
                 p.draw = () => {

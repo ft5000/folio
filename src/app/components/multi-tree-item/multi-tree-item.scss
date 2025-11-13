@@ -1,0 +1,47 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+.tree-item-container {
+    display: flex;
+    flex-direction: row;
+
+    .tree-icon-container {
+        width: 1.5rem;
+        font-size: small;
+
+        i {
+            vertical-align: bottom;
+            transition: transform 0.3s ease;
+        }
+
+        i.expanded {
+            transform: rotate(90deg);
+        }
+
+
+    }
+}
+
+.nav-item {
+    transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.nav-item:hover {
+    transform: scale(0.975);
+    opacity: 0.5;
+}
+
+.sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    ul {
+        list-style-type: none;
+        margin-block-start: 0.1em;
+        padding-inline-start: 2.5rem;
+    }
+}
+
+.sub-menu.expanded {
+max-height: 200px; /* Adjust as needed */
+}
+
