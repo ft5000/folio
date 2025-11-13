@@ -25,12 +25,18 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               {
-                "glob": "**/*",
-                "input": "public"
+              "glob": "**/*",
+              "input": "public"
+              },
+              {
+              "glob": "**/*",
+              "input": "public/images",
+              "output": "images"
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss"
             ]
           },
           "configurations": {
@@ -94,5 +100,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

@@ -1,0 +1,43 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+.nav-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  padding: 2rem;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  row-gap: 0.2rem;
+
+  .nav-item {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav-item.has-sub-menu::before {
+    content: '\f054';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: small;
+    transition: transform 0.3s ease;
+  }
+
+  .sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .sub-menu.expanded {
+    max-height: 200px; /* Adjust as needed */
+  }
+
+  .nav-item:hover {
+    transform: scale(0.975);
+    opacity: 0.5;
+  }
+}

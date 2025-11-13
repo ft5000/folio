@@ -1,0 +1,15 @@
+<nav class="nav-container">
+    <a routerLink="/about" class="nav-item">About</a>
+    <a class="nav-item has-sub-menu" (click)="toggle(NavItem.Projects)">
+        &nbsp;Projects
+    </a>
+    <div class="sub-menu" [ngClass]="{'expanded': isExpanded(NavItem.Projects)}">
+        <li>
+            <ul>1</ul>
+            <ul>2</ul>
+            <ul>3</ul>
+        </li>
+    </div>
+    <a routerLink="/sketches" class="nav-item">Sketches</a>
+    <a routerLink="/crawl" class="nav-item">Crawl</a>
+</nav>
