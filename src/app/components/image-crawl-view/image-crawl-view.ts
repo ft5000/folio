@@ -22,6 +22,9 @@ export class ImageCrawlView {
       this.images = data;
       this.setupImageObserver();
     });
+
+    document.body.style.setProperty('--fg-color', 'white');
+    document.body.style.setProperty('--bg-color', 'black');
   }
 
   private setupImageObserver() {

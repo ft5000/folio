@@ -25,11 +25,10 @@
 .nav-item {
     all: unset;
     user-select: none;
-    // font-weight: 600;
-    // font-family: monospace;
     font-family: 'ITC Avant Garde', monospace;
     font-size: 10pt;
     padding: 0.2rem 0.2rem;
+    transition: color 0.1s ease, background-color 0.1s ease;
 }
 
 .nav-item:hover {
