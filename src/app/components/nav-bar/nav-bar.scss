@@ -1,4 +1,5 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+@import '../../../styles.scss';
 
 .nav-container {
   position: fixed;
@@ -9,49 +10,6 @@
   width: fit-content;
   display: flex;
   flex-direction: column;
-  color: white;
+  color: $fg-color;
   row-gap: 0.2rem;
-
-  .nav-item {
-transition: opacity 0.1s ease, transform 0.1s ease;
-}
-
-.nav-item:hover {
-transform: scale(0.975);
-opacity: 0.5;
-}
-
-  // .tree-container
-  // {
-  //   display: flex;
-  //   flex-direction: row;
-
-  //   .tree-icon-container {
-  //     width: 1.5rem;
-  //     font-size: small;
-
-  //     i {
-  //       vertical-align: bottom;
-  //     }
-  //   }
-  // }
-
-  // .nav-item {
-  //   transition: opacity 0.1s ease, transform 0.1s ease;
-  // }
-
-  // .sub-menu {
-  //   max-height: 0;
-  //   overflow: hidden;
-  //   transition: max-height 0.3s ease;
-  // }
-
-  // .sub-menu.expanded {
-  //   max-height: 200px; /* Adjust as needed */
-  // }
-
-  // .nav-item:hover {
-  //   transform: scale(0.975);
-  //   opacity: 0.5;
-  // }
 }

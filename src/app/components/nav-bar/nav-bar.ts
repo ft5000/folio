@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MultiTreeItem } from '../multi-tree-item/multi-tree-item';
+import { TreeItem } from '../tree-item/tree-item';
 
 export enum NavItem {
   About = 'About',
@@ -11,7 +11,7 @@ export enum NavItem {
 
 @Component({
   selector: 'nav-bar',
-  imports: [CommonModule, MultiTreeItem],
+  imports: [CommonModule, TreeItem],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss',
 })
