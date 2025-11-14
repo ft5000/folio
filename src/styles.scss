@@ -95,4 +95,10 @@ body {
     z-index: 1000;
     mix-blend-mode: difference;
     user-select: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.arrow-down.show {
+    opacity: 1;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SanityService } from './services/sanity';
 import { CommonModule } from '@angular/common';
@@ -15,39 +15,11 @@ import { NavBar } from './components/nav-bar/nav-bar';
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
-export class App implements OnInit {
-  public images: ImageDTO[] = [];
-  public video: VideoDTO | null = null;
-
-  mo: MutationObserver | null = null;
-
-  constructor(private sanity: SanityService) {
+export class App {
+  constructor() {
   }
 
-  ngOnInit() {
-    this.sanity.getAllImages().subscribe((data: ImageDTO[]) => {
-      this.images = data;
-      this.setupImageObserver();
-    });
-    this.sanity.getAllVideos().subscribe((data: VideoDTO[]) => {
-      console.log('Videos:', data);
-      this.video = data[0];
-    });
-  }
-
-  private setupImageObserver() {
-    setTimeout(() => {
-      const images = document.querySelectorAll('.blog-image');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            (entry.target as HTMLElement).classList.add('show');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-
-      images.forEach(img => observer.observe(img));
-    });
+  public get canScrollDown(): boolean {
+    return window.innerHeight + window.scrollY < document.documentElement.scrollHeight;
   }
 }

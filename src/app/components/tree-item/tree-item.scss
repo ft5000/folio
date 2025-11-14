@@ -41,6 +41,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
+
     ul {
         list-style-type: none;
         margin-block-start: 0;
@@ -53,6 +54,6 @@
 }
 
 .sub-menu.expanded {
-    max-height: 200px;
+    max-height: 400px;
 }
 
