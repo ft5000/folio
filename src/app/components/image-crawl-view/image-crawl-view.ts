@@ -3,6 +3,7 @@ import { ImageDTO } from '../../../types/image';
 import { SanityService } from '../../services/sanity';
 import { CommonModule } from '@angular/common';
 import { GridItem } from '../grid-item/grid-item';
+import { VideoContainer } from '../video-container/video-container';
 
 @Component({
   selector: 'app-image-crawl-view',

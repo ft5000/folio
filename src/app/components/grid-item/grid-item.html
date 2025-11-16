@@ -2,6 +2,7 @@
     <img *ngIf="image"
         [src]="image.imageUrl"
         [alt]="image.alt"/>
+    <video-container *ngIf="video" [data]="video"></video-container>
     <div class="item-overlay" [ngClass]="{'show': hovered}">
         <div class="item-text">
             <h3>{{ title }}</h3>
