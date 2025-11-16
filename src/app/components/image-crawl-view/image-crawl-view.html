@@ -1,7 +1,7 @@
 <div class="grid-container">
     <div class="blog-grid">
       <ng-container *ngFor="let image of images; index as i">
-        <img *ngIf="i % 2 !== 0"
+        <img *ngIf="i % 3 === 0"
           [src]="image.imageUrl"
           [alt]="image.alt"
           class="blog-image"
@@ -10,11 +10,20 @@
     </div>
     <div class="blog-grid">
       <ng-container *ngFor="let image of images; index as i">
-        <img *ngIf="i % 2 === 0"
+        <img *ngIf="i % 3 === 1"
           [src]="image.imageUrl"
           [alt]="image.alt"
           class="blog-image"
         />
       </ng-container>
     </div>
-  </div>
+    <div class="blog-grid">
+      <ng-container *ngFor="let image of images; index as i">
+        <img *ngIf="i % 3 === 2"
+          [src]="image.imageUrl"
+          [alt]="image.alt"
+          class="blog-image"
+        />
+      </ng-container>
+    </div>
+</div>

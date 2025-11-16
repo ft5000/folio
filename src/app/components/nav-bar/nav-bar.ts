@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { TreeItem } from '../tree-item/tree-item';
 
 export enum NavItem {
@@ -18,7 +18,18 @@ export enum NavItem {
 export class NavBar {
 
   public NavItem = NavItem;
+  public isMouseInside: boolean = false;
 
   constructor() {
+  }
+
+  @HostListener('mouseenter')
+  onMouseEnter() {
+    this.isMouseInside = true;
+  }
+
+  @HostListener('mouseleave')
+  onMouseLeave() {
+    this.isMouseInside = false;
   }
 }

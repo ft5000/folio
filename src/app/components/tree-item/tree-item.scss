@@ -24,6 +24,9 @@
 
 .nav-item {
     all: unset;
+    display: inline-block;
+    box-sizing: border-box;
+    line-height: 1.2; 
     user-select: none;
     font-family: 'ITC Avant Garde', monospace;
     font-size: 10pt;
@@ -34,6 +37,10 @@
 .nav-item:hover {
     background-color: $fg-color;
     color: $bg-color;
+}
+
+.nav-item.active {
+    text-decoration: underline;
 }
 
 .sub-menu {

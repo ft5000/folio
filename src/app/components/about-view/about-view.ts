@@ -1,0 +1,154 @@
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-about-view',
+  imports: [CommonModule],
+  templateUrl: './about-view.html',
+  styleUrl: './about-view.scss',
+})
+export class AboutView implements OnInit, OnDestroy, AfterViewInit {
+  text: string[] = [
+    'FABIAN TJERNSTRÖM',
+    'DEVELOPER',
+    'CONTACT',
+    'EMAIL',
+    'GITHUB.COM/FT5000',
+    'LINKEDIN'
+  ];
+
+  constructor(private elementRef: ElementRef) {}
+
+  ngOnInit() {
+    document.body.style.setProperty('--fg-color', 'white');
+    document.body.style.setProperty('--bg-color', 'black');
+  }
+
+  ngAfterViewInit() {
+    this.initWebGL();
+  }
+
+  ngOnDestroy() {
+  }
+
+  private async initWebGL() {
+    const canvas = document.getElementById('about-bg') as HTMLCanvasElement;
+    if (!canvas) return;
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const gl = canvas.getContext('webgl2');
+    
+    if (!gl) {
+      console.error('WebGL 2 not supported');
+      return;
+    }
+    
+    // Load shader files
+    const vertResponse = await fetch('/shaders/about.vert');
+    const fragResponse = await fetch('/shaders/about.frag');
+    const vertSource = await vertResponse.text();
+    const fragSource = await fragResponse.text();
+    
+    // Create and compile shaders
+    const vertShader = gl.createShader(gl.VERTEX_SHADER);
+    if (!vertShader) return;
+    gl.shaderSource(vertShader, vertSource);
+    gl.compileShader(vertShader);
+    
+    if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+      return;
+    }
+    
+    const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+    if (!fragShader) return;
+    gl.shaderSource(fragShader, fragSource);
+    gl.compileShader(fragShader);
+    
+    if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+      return;
+    }
+    
+    // Create program
+    const program = gl.createProgram();
+    if (!program) return;
+    gl.attachShader(program, vertShader);
+    gl.attachShader(program, fragShader);
+    gl.linkProgram(program);
+    
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      return;
+    }
+
+    gl.useProgram(program);
+    
+    const vertices = new Float32Array([
+      -1, -1, 0,  0, 0,  // bottom-left
+       1, -1, 0,  1, 0,  // bottom-right
+      -1,  1, 0,  0, 1,  // top-left
+       1,  1, 0,  1, 1   // top-right
+    ]);
+
+    const uTex = gl.getUniformLocation(program, 'u_tex');
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    const image = new Image();
+    image.src = '/images/liquid.jpg';
+    image.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+      gl.useProgram(program);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.uniform1i(uTex, 0);
+    };
+    
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    
+    const stride = 5 * Float32Array.BYTES_PER_ELEMENT; // 5 floats per vertex (x,y,z,u,v)
+    
+    const aPosition = gl.getAttribLocation(program, 'aPosition');
+    gl.enableVertexAttribArray(aPosition);
+    gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, stride, 0);
+    
+    const aTexCoord = gl.getAttribLocation(program, 'aTexCoord');
+    gl.enableVertexAttribArray(aTexCoord);
+    gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, stride, 3 * Float32Array.BYTES_PER_ELEMENT);
+    
+    // Get uniform locations
+    const uResolution = gl.getUniformLocation(program, 'u_resolution');
+    const uTime = gl.getUniformLocation(program, 'u_time');
+    const uModelViewMatrix = gl.getUniformLocation(program, 'uModelViewMatrix');
+    const uProjectionMatrix = gl.getUniformLocation(program, 'uProjectionMatrix');
+    
+    // Set identity matrices
+    const identityMatrix = new Float32Array([
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    ]);
+    gl.uniformMatrix4fv(uModelViewMatrix, false, identityMatrix);
+    gl.uniformMatrix4fv(uProjectionMatrix, false, identityMatrix);
+    
+    // Animation loop
+    const render = (time: number) => {
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(uResolution, canvas.width, canvas.height);
+      gl.uniform1f(uTime, time * 0.001);
+      
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(render);
+    };
+    
+    render(0);
+  }
+
+}

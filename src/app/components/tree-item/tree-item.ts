@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChildren, ElementRef, Input, QueryList } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, ContentChildren, Input, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'tree-item',
@@ -8,18 +9,30 @@ import { RouterModule } from '@angular/router';
   templateUrl: './tree-item.html',
   styleUrls: ['./tree-item.scss'],
 })
-export class TreeItem {
+export class TreeItem implements OnInit, OnDestroy {
   @Input() expanded: boolean = false;
   @Input() name: string = 'Item';
   @Input() link: string = '';
+  isActive: boolean = false;
 
-  // @ContentChildren('projected', { descendants: true, read: ElementRef })
-  // projectedItems!: QueryList<ElementRef>;
+  private subscriptions: Subscription = new Subscription();
 
   @ContentChildren(TreeItem, { descendants: true })
   children!: QueryList<TreeItem>;
 
-  constructor() {}
+  constructor(private router: Router) {}
+  
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  ngOnInit() {
+    this.subscriptions.add(this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.isActive = this.link.length > 0 && this.router.url.startsWith(this.link);
+      }
+    }));
+  }
 
   toggle() {
     if (!this.hasChildren) return;

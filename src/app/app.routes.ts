@@ -8,5 +8,9 @@ export const routes: Routes = [
     {
         path: 'crawl',
         loadComponent: () => import('./components/image-crawl-view/image-crawl-view').then(m => m.ImageCrawlView)
+    },
+    {
+        path: 'about',
+        loadComponent: () => import('./components/about-view/about-view').then(m => m.AboutView)
     }
 ];

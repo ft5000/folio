@@ -11,7 +11,7 @@ import { NavBar } from './components/nav-bar/nav-bar';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, VideoContainer, P5PathsComponent, NavBar],
+  imports: [RouterOutlet, CommonModule, P5PathsComponent, NavBar],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
