@@ -1,4 +1,11 @@
-<div class="grid-item">
-<div class="item-overlay"></div>
-<ng-content></ng-content>
+<div class="grid-item" (mouseenter)="setHovered(true)" (mouseleave)="setHovered(false)">
+    <img *ngIf="image"
+        [src]="image.imageUrl"
+        [alt]="image.alt"/>
+    <div class="item-overlay" [ngClass]="{'show': hovered}">
+        <div class="item-text">
+            <h3>{{ title }}</h3>
+            <p>{{ publishedDate }}</p>
+        </div>
+    </div>
 </div>

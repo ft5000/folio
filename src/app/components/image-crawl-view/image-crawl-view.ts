@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { ImageDTO } from '../../../types/image';
 import { SanityService } from '../../services/sanity';
 import { CommonModule } from '@angular/common';
+import { GridItem } from '../grid-item/grid-item';
 
 @Component({
   selector: 'app-image-crawl-view',
-  imports: [CommonModule],
+  imports: [CommonModule, GridItem],
   templateUrl: './image-crawl-view.html',
   styleUrl: './image-crawl-view.scss',
 })
@@ -29,7 +30,7 @@ export class ImageCrawlView {
 
   private setupImageObserver() {
     setTimeout(() => {
-      const images = document.querySelectorAll('.blog-image');
+      const images = document.querySelectorAll('.grid-item');
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
