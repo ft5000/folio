@@ -1,0 +1,12 @@
+<div class="grid">
+  <ng-container *ngFor="let col of colArray; index as ci">
+    <div class="grid-column">
+      <ng-container *ngFor="let tmpl of templates; index as i">
+        <ng-container
+          *ngIf="i % cols === ci"
+          [ngTemplateOutlet]="tmpl">
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChildren, Input, QueryList } from '@angular/core';
+import { Component, ContentChildren, Input, QueryList, TemplateRef, ViewChild } from '@angular/core';
 import { ImageDTO } from '../../../types/image';
 import moment from 'moment';
 import { VideoDTO } from '../../../types/video';
@@ -52,6 +52,17 @@ export class GridItem {
         return moment(this.image!.publishedAt).format('YYYY/MM/DD');
       case GridItemType.Video:
         return moment(this.video!.publishedAt).format('YYYY/MM/DD');
+      default:
+        return '';
+    }
+  }
+
+  public get mediaId(): string {
+    switch (this.gridItemType) {
+      case GridItemType.Image:
+        return this.image!._id;
+      case GridItemType.Video:
+        return this.video!._id;
       default:
         return '';
     }

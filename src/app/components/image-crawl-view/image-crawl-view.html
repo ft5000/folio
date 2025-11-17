@@ -1,17 +1,16 @@
 <div class="grid-container">
-    <div class="blog-grid">
-      <ng-container *ngFor="let image of images; index as i">
-        <grid-item *ngIf="i % 3 === 0" [image]="image"></grid-item>
-      </ng-container>
-    </div>
-    <div class="blog-grid">
-      <ng-container *ngFor="let image of images; index as i">
-        <grid-item *ngIf="i % 3 === 1" [image]="image"></grid-item>
-      </ng-container>
-    </div>
-    <div class="blog-grid">
-      <ng-container *ngFor="let image of images; index as i">
-        <grid-item *ngIf="i % 3 === 2" [image]="image"></grid-item>
-      </ng-container>
-    </div>
+    <!-- <ng-container *ngFor="let col of colArray; index as ci">
+      <div class="blog-grid">
+        <ng-container *ngFor="let image of images; index as i">
+          <grid-item *ngIf="i % cols === ci" [image]="image"></grid-item>
+        </ng-container>
+      </div>
+    </ng-container> -->
+
+    <grid [maxCols]="4">
+      <ng-template *ngFor="let image of images">
+        <grid-item [image]="image"></grid-item>
+      </ng-template>
+    </grid>
 </div>
+

@@ -1,17 +1,8 @@
-<div class="grid-container" style="width: 75vw !important;">
-    <div class="blog-grid">
-        <ng-container *ngFor="let item of items; index as i">
-            <grid-item *ngIf="i % 3 === 0" [video]="item"></grid-item   >
-        </ng-container>
-    </div>
-    <div class="blog-grid">
-        <ng-container *ngFor="let item of items; index as i">
-            <grid-item *ngIf="i % 3 === 1" [video]="item"></grid-item>
-        </ng-container>
-    </div>
-    <div class="blog-grid">
-        <ng-container *ngFor="let item of items; index as i">
-            <grid-item *ngIf="i % 3 === 2" [video]="item"></grid-item>
-        </ng-container>
-    </div>
-  </div>
+<div class="grid-container" style="width: 75%;">
+    <grid [maxCols]="3">
+      <ng-template *ngFor="let item of items">
+        <grid-item [video]="item"></grid-item>
+      </ng-template>
+    </grid>
+</div>
+

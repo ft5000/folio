@@ -1,17 +1,25 @@
-import { HostListener, OnDestroy } from "@angular/core";
-import { Component } from "@angular/core";
+import { Component, ContentChildren, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, TemplateRef } from '@angular/core';
+import { GridItem } from '../grid-item/grid-item';
+import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-grid-view',
-    template: '',
-    styleUrls: []
+  selector: 'grid',
+  imports: [CommonModule],
+  templateUrl: './grid.html',
+  styleUrls: ['./grid.scss'],
 })
-export class GridView implements OnDestroy {
+export class Grid implements OnDestroy, OnInit {
   private observer: IntersectionObserver | undefined;
   public cols: number = 1;
-  private maxCols: number = 4;
+  @Input() maxCols: number = 4;
+  @Input() minColWidth: number = 200;
 
+  @ContentChildren(TemplateRef) templates!: QueryList<TemplateRef<any>>;
+  
   constructor() {
+  }
+  
+  ngOnInit(): void {
     this.calculateColumns();
   }
 
@@ -52,8 +60,7 @@ export class GridView implements OnDestroy {
 
   protected calculateColumns() {
     const width = window.innerWidth;
-    const minColWidth = 200;
-    let cols = Math.max(1, Math.min(this.maxCols, Math.floor(width / minColWidth)));
+    let cols = Math.max(1, Math.min(this.maxCols, Math.floor(width / this.minColWidth)));
     this.setCols(cols);
   }
 }

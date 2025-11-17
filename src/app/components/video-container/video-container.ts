@@ -31,16 +31,21 @@ export class VideoContainer implements AfterViewInit {
   private setVideoSource() {
     if (this.data && this.videoOutlet) {
       const videoElement = document.createElement('video');
+      
       videoElement.src = this.data.videoUrl;
-      videoElement.autoplay = true;
+      videoElement.autoplay = false;
       videoElement.muted = true;
+      videoElement.preload = 'auto';
       videoElement.playsInline = true;
       videoElement.loop = true;
 
+      videoElement.oncanplay = () => {
+        videoElement.play().catch(err => console.warn('Autoplay blocked:', err));
+      };
+      videoElement.load();
+
       this.videoOutlet.nativeElement.innerHTML = '';
       this.videoOutlet.nativeElement.appendChild(videoElement);
-
-      videoElement.play().catch(err => console.warn('Autoplay blocked:', err));
     }
   }
 }

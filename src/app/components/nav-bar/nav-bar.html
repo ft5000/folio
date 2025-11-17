@@ -1,9 +1,12 @@
 <nav class="nav-container">
-    <tree-item [name]="NavItem.About" [link]="'/about'"></tree-item>
-    <tree-item [name]="NavItem.Projects">
-        <tree-item [name]="'Project 1'"></tree-item>
-    </tree-item>
-    <tree-item [name]="NavItem.Sketches" [link]="'/sketches'"></tree-item>
-    <tree-item [name]="NavItem.Crawl" [link]="'/crawl'"></tree-item>
+    <div class="tree-container" #tree>
+        <tree-item [name]="NavItem.About" [link]="'/about'"></tree-item>
+        <tree-item [name]="NavItem.Projects">
+            <tree-item [name]="'Coming soon'"></tree-item>
+        </tree-item>
+        <tree-item [name]="NavItem.Sketches" [link]="'/sketches'"></tree-item>
+        <tree-item [name]="NavItem.Crawl" [link]="'/crawl'"></tree-item>
+        <!-- <div class="tree-bg show"></div> -->
+    </div>
     <!-- <div class="nav-bg" [ngClass]="{'show': isMouseInside}"></div> -->
 </nav>

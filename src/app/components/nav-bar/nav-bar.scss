@@ -5,8 +5,8 @@
   position: fixed;
   left: 0;
   top: 0;
-  height: 100vh;
-  padding: 2rem;
+  height: fit-content;
+  padding: 1rem;
   width: fit-content;
   display: flex;
   flex-direction: column;
@@ -29,4 +29,26 @@
 
 .nav-bg.show {
   opacity: 1;
+}
+
+.tree-container {
+    position: relative;
+    padding: 0.5rem;
+}
+
+.tree-bg {
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    background-color: $bg-color;
+    transition: opacity 0.3s ease-in-out;
+    filter: blur(48px);
+}
+
+.tree-bg.show {
+    opacity: 0.5;
 }

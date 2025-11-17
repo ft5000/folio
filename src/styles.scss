@@ -72,9 +72,9 @@ body {
     display: flex;
     flex-direction: row;
     column-gap: 0.5rem;
-    width: 75%;
+    width: 100%;
     margin: auto;
-    padding: 1rem;
+    padding: 0.5rem;
     box-sizing: border-box;
 }
 
@@ -94,4 +94,10 @@ body {
 
 .arrow-down.show {
     opacity: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .grid-container {
+        width: 100%;
+    }
 }
