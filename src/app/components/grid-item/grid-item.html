@@ -1,9 +1,10 @@
-<div class="grid-item" (mouseenter)="setHovered(true)" (mouseleave)="setHovered(false)">
+<div class="grid-item" (mouseenter)="setHovered(true)" (mouseleave)="setHovered(false)" #gridItem>
     <img *ngIf="image"
         [src]="image.imageUrl"
         [alt]="image.alt"/>
     <video-container *ngIf="video" [data]="video"></video-container>
     <div class="item-overlay" [ngClass]="{'show': hovered}">
+        <!-- <i class="fa fa-spinner"></i> -->
         <div class="item-text">
             <p>{{ title }}</p>
             <p>{{ publishedDate }}</p>

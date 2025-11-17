@@ -56,3 +56,18 @@
 .item-overlay.show {
     opacity: 1;
 }
+
+.fa.fa-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    font-size: 2rem;
+    color: $fg-color;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

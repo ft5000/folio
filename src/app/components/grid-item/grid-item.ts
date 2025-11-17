@@ -18,6 +18,7 @@ export enum GridItemType {
   styleUrls: ['./grid-item.scss'],
 })
 export class GridItem {
+  @ViewChild('gridItem', { static: true }) gridItemElement!: any;
   @Input() image: ImageDTO | null = null;
   @Input() video: VideoDTO | null = null;
   hovered: boolean = false;
@@ -66,5 +67,9 @@ export class GridItem {
       default:
         return '';
     }
+  }
+
+  public get show(): boolean {
+    return this.gridItemElement.nativeElement.classList.contains('show');
   }
 }

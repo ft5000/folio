@@ -15,8 +15,14 @@ import { NavBar } from './components/nav-bar/nav-bar';
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
-export class App {
+export class App implements OnInit {
+  public isMobile: boolean = false;
+
   constructor() {
+  }
+
+  ngOnInit(): void {
+    this.isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
   }
 
   public get canScrollDown(): boolean {
