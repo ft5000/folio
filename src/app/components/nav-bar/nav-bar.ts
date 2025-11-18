@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TreeItem } from '../tree-item/tree-item';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Subscriber, Subscription } from 'rxjs';
 
 export enum NavItem {
   About = 'About',
@@ -15,13 +18,35 @@ export enum NavItem {
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss',
 })
-export class NavBar implements AfterViewInit {
+export class NavBar implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('tree') tree!: ElementRef;
 
   public NavItem = NavItem;
   public isMouseInside: boolean = false;
+  public expanded: boolean = false;
 
-  constructor() {
+  subscribers: Subscription = new Subscription();
+
+  constructor(private router: Router) {
+  }
+
+  ngOnDestroy(): void {
+    this.subscribers.unsubscribe();
+  }
+
+  ngOnInit(): void {
+    this.subscribers.add(this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.expanded = false;
+    }));
+  }
+
+  @HostListener('click', ['$event'])
+  onClick(event: MouseEvent) {
+    if (this.expanded && !this.tree.nativeElement.contains(event.target) && !(event.target as HTMLElement).closest('.nav-button')) {
+      this.expanded = false;
+    }
   }
 
   ngAfterViewInit() {
@@ -32,5 +57,9 @@ export class NavBar implements AfterViewInit {
     this.tree.nativeElement.addEventListener('mouseleave', () => {
       this.isMouseInside = false;
     });
+  }
+
+  public toggleExpand() {
+    this.expanded = !this.expanded;
   }
 }

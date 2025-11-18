@@ -10,7 +10,7 @@ import { Component, OnInit, OnDestroy, ElementRef, AfterViewInit } from '@angula
             inset: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 1000; /* Changed from -1 to 1000 to bring to foreground */
+            z-index: 999999;
             pointer-events: none;
             overflow: hidden;
             display: block;
