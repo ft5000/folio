@@ -1,4 +1,4 @@
-import { Component, ContentChildren, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, TemplateRef } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild } from '@angular/core';
 import { GridItem } from '../grid-item/grid-item';
 import { CommonModule } from '@angular/common';
 
@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./grid.scss'],
 })
 export class Grid implements OnDestroy, OnInit {
+  @ViewChild('gridContainer', { static: true }) gridContainer!: ElementRef;
+  
   private observer: IntersectionObserver | undefined;
   public cols: number = 1;
   @Input() maxCols: number = 4;
