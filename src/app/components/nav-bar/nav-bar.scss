@@ -1,19 +1,19 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
 @import '../../../styles.scss';
 
-.nav-container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: fit-content;
-  padding: 1rem;
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  color: $fg-color;
-  row-gap: 0.2rem;
-  z-index: 99999;
-}
+// .nav-container {
+//   position: fixed;
+//   left: 0;
+//   top: 0;
+//   height: fit-content;
+//   padding: 1rem;
+//   width: fit-content;
+//   display: flex;
+//   flex-direction: column;
+//   color: $fg-color;
+//   row-gap: 0.2rem;
+//   z-index: 99999;
+// }
 
 .nav-bg {
   opacity: 0;
@@ -34,21 +34,68 @@
 .tree-container {
     position: relative;
     padding: 0.5rem;
+    color: $fg-color;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    width: fit-content
+}
+
+.tree-container.show {
+  opacity: 1;
 }
 
 .tree-bg {
-    opacity: 0;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    background-color: $bg-color;
-    transition: opacity 0.3s ease-in-out;
-    filter: blur(48px);
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  background-color: $bg-color;
+  transition: opacity 0.3s ease-in-out;
+  filter: blur(48px);
 }
 
 .tree-bg.show {
-    opacity: 0.5;
+  opacity: 0.5;
+}
+
+.nav-button {
+  all: unset;
+  color: var(--fg-color, white);
+  width: fit-content;
+  height: fit-content;
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  padding: 0.5rem;
+}
+
+.toggle-nav {
+  height: 0;
+  transition: height 0.3s ease;
+  overflow: hidden;
+}
+
+.toggle-nav.show {
+  height: 100%;
+}
+
+.nav-main {
+  padding: 2rem;
+  position: fixed;
+  z-index: 15;
+  width: 100%;
+  height: 100vh;
+  background-color: color-mix(in srgb, var(--bg-color, black), transparent 20%);
+  transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-main.hide {
+  background-color: color-mix(in srgb, var(--bg-color, black), transparent 100%);
+  pointer-events: none;
 }

@@ -57,7 +57,6 @@ export class VideoContainer implements AfterViewInit, OnDestroy {
                     .catch((err) =>
                       console.warn('Autoplay blocked or interrupted:', err)
                     );
-                  console.log('Playing video after loading data');
                   this.loaded = true;
                 };
               } else {
@@ -70,7 +69,6 @@ export class VideoContainer implements AfterViewInit, OnDestroy {
             }
           } else {
             if (!videoEl.paused) {
-              console.log('Pausing video due to exit from viewport');
               videoEl.pause();
             }
           }

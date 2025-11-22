@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { VideoDTO } from '../../../types/video';
 import { SanityService } from '../../services/sanity';
-import { VideoContainer } from '../video-container/video-container';
 import { CommonModule } from '@angular/common';
 import { GridItem } from '../grid-item/grid-item';
 import { GridView } from '../../classes/grid-view';
@@ -9,7 +8,7 @@ import { Grid } from '../grid/grid';
 
 @Component({
   selector: 'app-sketches-view',
-  imports: [CommonModule, VideoContainer, GridItem, Grid],
+  imports: [CommonModule, GridItem, Grid],
   templateUrl: './sketches-view.html',
   styleUrl: './sketches-view.scss',
 })
