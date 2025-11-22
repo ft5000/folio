@@ -12,7 +12,13 @@
     flex-direction: column;
     // height: 200vh;
     background-color: $bg-color;
-    padding: 2rem 0;
+    padding: 1rem 0;
+
+    a {
+        color: $fg-color;
+        text-decoration: none;
+        cursor: none !important;
+    }
 }
 
 .title-container {
