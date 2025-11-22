@@ -12,10 +12,6 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     'FABIAN TJERNSTRÖM',
     'DEVELOPER',
     '-------------',
-    'CONTACT',
-    'EMAIL',
-    'GITHUB',
-    'LINKEDIN'
   ];
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
@@ -34,6 +30,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+  }
+
+  public getSpacerContent(): string {
+    return ' ';
   }
 
   private async initWebGL() {
