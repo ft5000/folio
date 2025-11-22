@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-about-view',
@@ -11,13 +11,14 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   text: string[] = [
     'FABIAN TJERNSTRÖM',
     'DEVELOPER',
+    '-------------',
     'CONTACT',
     'EMAIL',
-    'GITHUB.COM/FT5000',
+    'GITHUB',
     'LINKEDIN'
   ];
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
 
   ngOnInit() {
     document.body.style.setProperty('--fg-color', 'white');
@@ -25,6 +26,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    const el = this.renderer.createElement('canvas');
+    this.renderer.setAttribute(el, 'id', 'about-bg');
+    this.renderer.appendChild(this.elementRef.nativeElement, el);
+
     this.initWebGL();
   }
 
@@ -34,9 +39,12 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private async initWebGL() {
     const canvas = document.getElementById('about-bg') as HTMLCanvasElement;
     if (!canvas) return;
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    const dpr = window.devicePixelRatio || 1;
+  
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+
     const gl = canvas.getContext('webgl2');
     
     if (!gl) {
@@ -94,7 +102,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     const image = new Image();
-    image.src = '/images/liquid.jpg';
+    image.src = '/images/header_3.jpg';
     image.onload = () => {
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);

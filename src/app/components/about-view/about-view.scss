@@ -1,6 +1,7 @@
 @import '../../../styles.scss';
 
 .about-container {
+    font-family: 'Necto Mono', monospace;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -29,10 +30,14 @@
 
 #about-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
+    top: 50%;
+    left: 50%;
+    // aspect-ratio: 16 / 9;
+    // width: min(1920px, 100vw);
+    min-width: 1920px;
+    width: 100%;
     height: 100vh;
+    transform: translate(-50%, -50%);
     z-index: -1;
     animation: forwards fadeIn 1s ease;
 }
@@ -43,5 +48,12 @@
     }
     to {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #about-bg {
+        left: -30%;
+        transform: translate(-35%, -50%);
     }
 }

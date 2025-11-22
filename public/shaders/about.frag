@@ -50,34 +50,49 @@ float cnoise(vec2 P){
 }
 
 void main() {
-    vec2 uv = vTexCoord;
-    uv.y = 1.0 - uv.y;
+    // Time that never decreases (good for movement speed)
+    float time = u_time + 100.0;
 
-    // Center coordinates
-    vec2 center = vec2(0.5, 0.5);
-    float dist = distance(uv, center);
+    // *** LOOPING NOISE TIME (key fix!) ***
+    // Keeps noise coords small & prevents runaway distortion
+    float ntime = sin(u_time * 0.001) * 100.0;
 
-    // Radial gradient with animated edge
-    float gradient = 0.1 - dist + 1.0 * sin(u_time + dist * 0.1);
+    // Coordinates
+    vec2 movedCoord = vTexCoord;
+    movedCoord = movedCoord * 0.75 + 0.1;
+    movedCoord.y = 1.0 - movedCoord.y;
 
-    // Add Perlin noise
-    float noise = cnoise(uv * 5.0 + u_time * 0.1) * 5.0;
+    float brightness = texture(u_tex, movedCoord).r;
+    float mappedBrightness = mix(0.01, 1.0, brightness);
 
-    float colorValue = clamp(gradient + noise, 0.0, 1.0);
+    // Distortion intensity oscillates mildly
+    float distortionAmount = mix(
+        0.05,
+        0.1,
+        0.5 + 0.5 * sin(u_time * 0.5)
+    );
 
-    // Multi-color gradient
-    vec3 col1 = vec3(0.0, 0.0, 0.0);      // black
-    vec3 col2 = vec3(1.0, 1.0, 1.0);      // white
-    vec3 col3 = vec3(1.0, 1.0, 1.0);      // magenta
-    vec3 col4 = vec3(1.0, 0.8, 0.0);      // yellow
-    vec3 col5 = vec3(1.0, 0.0, 0.5);      // magenta
+    // ----------------------------
+    // Vertical distortion (stable)
+    // ----------------------------
+    float noiseY = cnoise(vec2(0.0, movedCoord.y * 8.0 + ntime));
 
-    vec3 color;
-    if (colorValue < 0.1) {
-        color = mix(col1, col2, colorValue / 0.25);
-    } else {
-        color = mix(col2, col3, (colorValue - 0.25) / 0.25);
-    }
+    movedCoord.y = sin(
+        movedCoord.y -
+        time * 0.05 * mappedBrightness * noiseY
+    ) * distortionAmount + movedCoord.y;
 
-    fragColor = vec4(color, 0.8);
+    // Edge fade and clamp
+    float edgeFade = smoothstep(0.001, 0.01, min(movedCoord.y, 1.0 - movedCoord.y));
+    movedCoord.y = clamp(movedCoord.y, 0.0, 1.0);
+
+    // ----------------------------
+    // Horizontal distortion (stable)
+    // ----------------------------
+    float noiseX = cnoise(vec2(movedCoord.y * 10.0 + ntime, ntime));
+    movedCoord.x += noiseX * 0.001;
+
+    // Final color
+    vec4 texColor = texture(u_tex, movedCoord);
+    fragColor = vec4(texColor.rgb * edgeFade, 1.0);
 }
