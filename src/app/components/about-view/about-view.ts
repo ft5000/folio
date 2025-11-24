@@ -41,6 +41,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     if (!canvas) return;
 
     const dpr = window.devicePixelRatio || 1;
+    const aspectRatio = 2660 / 1440;
+
+    canvas.style.position = 'fixed';
+    canvas.style.zIndex = '-1';
   
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
