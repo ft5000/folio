@@ -1,30 +1,49 @@
 @import '../../../styles.scss';
 
+.about-view {
+    width: 100%;
+    min-height: 200vh;
+    display: flex;
+    flex-direction: column;
+
+    section {
+        flex: 1;
+        background-color: transparent;
+        transition: background-color 0.5s ease;
+    }
+}
+
+.about-column {
+    width: 1024px;
+    margin: auto;
+    height: 100%;
+}
+
 .about-container {
     font-family: 'Necto Mono', monospace;
-    // position: absolute;
-    // bottom: 0;
     width: 100%;
-    // aspect-ratio: 1 / 1;
-    // margin: auto;
     color: $fg-color;
     display: flex;
     flex-direction: column;
-    // height: 200vh;
-    // background-color: $bg-color;
     padding: 1rem 0;
+    font-size: 10pt;
+    text-align: center;
 
     a {
         color: $fg-color;
         text-decoration: none;
         cursor: none !important;
     }
+
+    p {
+        margin: 0.5rem 0;
+    }
 }
 
 pre {
     display: block;
     width: fit-content;
-    font-size: clamp(8pt, 2vw, 9pt);
+    font-size: clamp(8pt, 2vw, 10pt);
     color: $fg-color;
     margin: 0;
 }
@@ -44,16 +63,6 @@ pre {
     flex-direction: row;
     justify-content: center;
     margin: 2rem 0;
-}
-
-.about-container p {
-    margin: 0;
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    text-align: justify;
-    text-align-last: center;
-    justify-content: space-between;
 }
 
 .flex-center-container {
@@ -118,5 +127,9 @@ pre {
     #about-bg {
         left: -30%;
         transform: translate(-35%, -50%);
+    }
+
+    .about-column {
+        width: 100%;
     }
 }

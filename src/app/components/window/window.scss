@@ -1,0 +1,86 @@
+@import '../../../styles.scss';
+
+
+.window {
+    font-family: 'Necto Mono', monospace;
+    color: $fg-color;
+
+    width: 100%;
+    height: fit-content;
+
+    font-size: 12pt;
+
+    .corner {
+        width: 12pt;
+        text-align: center;
+        user-select: none;
+    }
+
+    .border-h-row {
+        display: flex;
+        flex-direction: row;
+        line-height: 12pt;
+        
+        .border-h {
+            flex: 1 1 0%;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: clip;
+
+            display: flex;
+        }
+
+        .border-h > span {
+            align-self: flex-end;
+            position: relative;
+            height: 12pt;
+        }
+
+        .border-h > span::after {
+            content: "=========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================";
+            white-space: nowrap;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            pointer-events: none;
+        }
+    }
+
+    .border-v-row {
+        display: flex;
+        flex-direction: row;
+        line-height: 12pt;
+    }
+
+    .border-v {
+        flex: 1 1 0%;
+        min-height: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: clip;
+        display: flex;
+    }
+
+    .border-v > span {
+        align-self: flex-start;
+        position: relative;
+        height: 12pt;
+    }
+
+    .border-v > span::after {
+        content: "║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║║";
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        pointer-events: none;
+    }
+
+
+}
+

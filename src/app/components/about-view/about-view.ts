@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { WindowComponent } from '../window/window';
 
 @Component({
   selector: 'app-about-view',
-  imports: [CommonModule],
+  imports: [CommonModule, WindowComponent],
   templateUrl: './about-view.html',
   styleUrl: './about-view.scss',
 })
