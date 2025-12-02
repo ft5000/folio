@@ -2,25 +2,30 @@
 
 .about-view {
     width: 100%;
-    min-height: 200vh;
+    height: 200vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
+    background-color: transparent;
+    transition: 1s background-color ease;
 
     section {
         flex: 1;
-        background-color: transparent;
-        transition: background-color 0.5s ease;
     }
 }
 
+.about-view.show-bg {
+    background-color: color-mix(in srgb, var(--bg-color), transparent 0%);
+}
+
 .about-column {
-    width: 1024px;
+    width: 768px;
     margin: auto;
     height: 100%;
 }
 
 .about-container {
-    font-family: 'Necto Mono', monospace;
+    font-family: monospace;
     width: 100%;
     color: $fg-color;
     display: flex;
@@ -35,9 +40,19 @@
         cursor: none !important;
     }
 
-    p {
-        margin: 0.5rem 0;
+    a:hover {
+        text-decoration: underline;
     }
+
+    p {
+        margin: 0;
+        font-size: clamp(8pt, 2vw, 10pt);
+    }
+}
+
+::selection {
+    background: $fg-color;
+    color: $bg-color;
 }
 
 pre {
@@ -112,6 +127,11 @@ pre {
     transform: translate(-50%, -50%);
     z-index: -1;
     animation: forwards fadeIn 1s ease;
+    transition: filter 1s ease;
+}
+
+#about-bg.blur {
+    filter: blur(16px);
 }
 
 @keyframes fadeIn {
@@ -123,6 +143,24 @@ pre {
     }
 }
 
+@keyframes bgIntro {
+    from {
+        background-color: rgba(0, 0, 0, 0.0);
+    }
+    to {
+        background-color: rgba(0, 0, 0, 0.75);
+    }
+}
+
+@keyframes intro {
+    from {
+        transform: translateY(100%)
+    }
+    to {
+        transform: translateY(0%)
+    }
+}
+
 @media screen and (max-width: 768px) {
     #about-bg {
         left: -30%;
@@ -130,6 +168,6 @@ pre {
     }
 
     .about-column {
-        width: 100%;
+        width: 95vw;
     }
 }

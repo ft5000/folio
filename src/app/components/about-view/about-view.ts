@@ -9,11 +9,7 @@ import { WindowComponent } from '../window/window';
   styleUrl: './about-view.scss',
 })
 export class AboutView implements OnInit, OnDestroy, AfterViewInit {
-  text: string[] = [
-    'FABIAN TJERNSTRÖM',
-    'DEVELOPER',
-    '-------------',
-  ];
+  private observer: IntersectionObserver | undefined;
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
 
@@ -28,9 +24,36 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.renderer.appendChild(this.elementRef.nativeElement, el);
 
     this.initWebGL();
+
+    this.observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(entry => {
+      if (entry.target.id === 'about-content') {
+        const aboutView = document.querySelector('.about-view');
+        const aboutBg = document.getElementById('about-bg');
+
+        if (entry.isIntersecting) {
+          aboutView?.classList.add('show-bg');
+          aboutBg?.classList.add('blur');
+        } else {
+          aboutView?.classList.remove('show-bg');
+          aboutBg?.classList.remove('blur');
+        }
+      }
+    });
+  },
+  { threshold: 0.5 }
+);
+
+// Observe ONLY the about-content element
+const aboutContent = document.getElementById('about-content');
+if (aboutContent) {
+  this.observer.observe(aboutContent);
+}
   }
 
   ngOnDestroy() {
+    this.observer?.disconnect();
   }
 
   public getSpacerContent(): string {
