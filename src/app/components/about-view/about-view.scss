@@ -42,6 +42,7 @@
 
     a:hover {
         text-decoration: underline;
+        color: purple;
     }
 
     p {
@@ -58,7 +59,7 @@
 pre {
     display: block;
     width: fit-content;
-    font-size: clamp(8pt, 2vw, 10pt);
+    font-size: clamp(7pt, 2vw, 10pt);
     color: $fg-color;
     margin: 0;
 }
