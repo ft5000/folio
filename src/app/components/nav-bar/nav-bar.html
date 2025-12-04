@@ -5,16 +5,16 @@
     <div class="tree-container" [ngClass]="{'show': expanded}" #tree>
         <tree-item [name]="NavItem.About" [link]="'/about'"></tree-item>
         <tree-item [name]="NavItem.Projects">
-            <tree-item [name]="'Coming soon'"></tree-item>
+            <ng-container *ngIf="projectTitles.length === 0; else projectList">
+                <tree-item [name]="'Coming soon'"></tree-item>
+            </ng-container>
+            <ng-template #projectList>
+                <ng-container *ngFor="let title of projectTitles">
+                    <tree-item [name]="title" [link]="getProjectLink(title)"></tree-item>
+                </ng-container>
+            </ng-template>
         </tree-item>
         <tree-item [name]="NavItem.Sketches" [link]="'/sketches'"></tree-item>
         <tree-item [name]="NavItem.Crawl" [link]="'/crawl'"></tree-item>
     </div>
-        <!-- <button class="nav-button" (click)="toggleExpand()">
-            <i class="fas fa-bars"></i>
-        </button> -->
 </nav>
-
-<!-- <button class="nav-button" (click)="toggleExpand()">
-    <i class="fas fa-bars"></i>
-</button> -->

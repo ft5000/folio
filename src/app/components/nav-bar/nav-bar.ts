@@ -4,6 +4,7 @@ import { TreeItem } from '../tree-item/tree-item';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Subscriber, Subscription } from 'rxjs';
+import { SanityService } from '../../services/sanity';
 
 export enum NavItem {
   About = 'About',
@@ -25,9 +26,11 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
   public isMouseInside: boolean = false;
   public expanded: boolean = false;
 
+  public projectTitles: string[] = [];
+
   subscribers: Subscription = new Subscription();
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private sanityService: SanityService) {
   }
 
   ngOnDestroy(): void {
@@ -40,6 +43,11 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((event: NavigationEnd) => {
       this.expanded = false;
     }));
+    this.sanityService.getAllProjectTitles()
+      .pipe(filter((titles) => titles != null))
+      .subscribe(titles => {
+        this.projectTitles = titles;
+      });
   }
 
   @HostListener('click', ['$event'])
@@ -61,5 +69,9 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
 
   public toggleExpand() {
     this.expanded = !this.expanded;
+  }
+
+  public getProjectLink(title: string): string {
+    return '/projects/' + title.toLowerCase().replace(/ /g, '-');
   }
 }

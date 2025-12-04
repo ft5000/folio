@@ -1,4 +1,4 @@
-<div class="grid-item" (mouseenter)="setHovered(true)" (mouseleave)="setHovered(false)" #gridItem>
+<div class="grid-item" [ngClass]="{'show': showDefault}" (mouseenter)="setHovered(true)" (mouseleave)="setHovered(false)" #gridItem>
     <img *ngIf="image"
         [src]="image.imageUrl"
         [alt]="image.alt"/>

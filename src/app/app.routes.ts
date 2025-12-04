@@ -12,5 +12,9 @@ export const routes: Routes = [
     {
         path: 'about',
         loadComponent: () => import('./components/about-view/about-view').then(m => m.AboutView)
+    },
+    {
+        path: 'projects/:projectId',
+        loadComponent: () => import('./components/project-view/project-view').then(m => m.ProjectView)
     }
 ];

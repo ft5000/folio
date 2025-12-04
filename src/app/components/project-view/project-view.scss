@@ -1,0 +1,33 @@
+@import '../../../styles.scss';
+
+
+.project-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    height: 100vh;
+    width: 1280px;
+    // background-color: red;
+    margin: auto;
+    color: $fg-color;
+    font-family: 'Necto Mono', monospace;
+
+    .left-pane {
+        grid-column: span 1;
+        // border-right: 1px solid $fg-color;
+        height: 100%;
+        padding: 2rem;
+
+        grid-item {
+            display: block;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .right-pane {
+        grid-row: span 1;
+        height: 100%;
+        padding: 2rem;
+    }
+
+}

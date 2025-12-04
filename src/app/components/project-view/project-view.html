@@ -1,0 +1,28 @@
+<ng-container *ngIf="project">
+    <div class="project-column">
+        <div class="left-pane">
+            <ng-container *ngIf="projectImages && projectImages.length > 0">
+                <ng-container *ngFor="let image of projectImages">
+                        <grid-item [image]="image" [showDefault]="true"></grid-item>
+                        <!-- <img [src]="image.imageUrl" [alt]="image.alt || project?.title" style="width: 100%;"/> -->
+                    </ng-container>
+            </ng-container>
+        </div>
+        <div class="right-pane">
+            <window>
+                <div style="padding: 1rem">
+                <h3 style="margin-top: 0;">{{project?.title}}</h3>
+                    <ng-container *ngFor="let block of project?.description">
+                        <p *ngIf="block._type === 'block'">
+                            <ng-container *ngFor="let child of block.children">
+                                <span [innerHTML]="renderSpan(child, block)"></span>
+                            </ng-container>
+                        </p>
+                    </ng-container>
+                </div>
+            </window>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #text></ng-template>

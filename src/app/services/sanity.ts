@@ -4,6 +4,7 @@ import groq from 'groq';
 import { Observable } from 'rxjs';
 import { ImageDTO } from '../../types/image';
 import { VideoDTO } from '../../types/video';
+import { ProjectDTO } from '../../types/project';
 
 @Injectable({
   providedIn: 'root',
@@ -76,6 +77,54 @@ export class SanityService {
     } | order(publishedAt desc)`;
     return new Observable<VideoDTO[]>(observer => {
       this.client.fetch(query)
+      .then(data => {
+        observer.next(data);
+        observer.complete();
+      })
+      .catch(err => observer.error(err));
+    });
+  }
+
+  public getAllProjectTitles(): Observable<string[]> {
+    const query = groq`*[_type == "project"]{
+      title
+    } | order(title asc)`;
+    return new Observable<string[]>(observer => {
+      this.client.fetch(query)
+      .then(data => {
+        const titles = data.map((item: any) => item.title);
+        observer.next(titles);
+        observer.complete();
+      })
+      .catch(err => observer.error(err));
+    });
+  }
+
+  public getProjectByTitle(title: string): Observable<ProjectDTO> {
+    const query = groq`*[_type == "project" && title == $title][0]{
+      _id,
+      _createdAt,
+      _updatedAt,
+      _rev,
+      title,
+      description,
+      images[]{
+        _key,
+        title,
+        alt,
+        caption,
+        publishedAt,
+        "image": {
+          title,
+          "imageUrl": image.asset->url,
+          alt,
+          caption,
+          publishedAt
+        }
+      }
+    }`;
+    return new Observable<ProjectDTO>(observer => {
+      this.client.fetch(query, { title })
       .then(data => {
         observer.next(data);
         observer.complete();

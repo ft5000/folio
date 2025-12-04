@@ -29,7 +29,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: color-mix(in srgb, $bg-color 75%, transparent);
+    background-color: color-mix(in srgb, $bg-color 50%, transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
     box-sizing: border-box;
