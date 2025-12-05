@@ -1,33 +1,93 @@
 @import '../../../styles.scss';
 
 
-.project-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    height: 100vh;
-    width: 1280px;
-    // background-color: red;
-    margin: auto;
-    color: $fg-color;
-    font-family: 'Necto Mono', monospace;
+::selection {
+    background-color: black;
+    color: white;
+}
 
-    .left-pane {
-        grid-column: span 1;
-        // border-right: 1px solid $fg-color;
-        height: 100%;
-        padding: 2rem;
+.project-column {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    // height: 100vh;
+    margin: auto;
+    // color: $fg-color;
+    font-family: monospace;
+    /* overflow: hidden; */
+
+    .content-pane {
+        background-color: black;
+        flex: 0.45;
+        overflow-y: scroll;
+        min-height: fit-content;
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
 
         grid-item {
             display: block;
-            margin-bottom: 1rem;
+            width: 100%;
         }
     }
 
-    .right-pane {
-        grid-row: span 1;
-        height: 100%;
-        padding: 2rem;
+    .text-pane {
+        flex: 0.55;
+        position: sticky;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        color: black;
+        background-color: white;
+
+        .text-heading {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            padding: 0 1rem;
+            margin-top: 2rem;
+            
+            h3 {
+                font-weight: normal;
+            }
+        }
+    }
+}
+
+span:has(.project-link) {
+//    border-top: 1px solid black;
+//     border-bottom: 1px solid black;
+    padding: 0.5rem 0;
+    margin-top: 1rem;
+    width: 100%;
+    display: block;
+}
+
+.project-link  {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.25rem;
+    transition: background-color 0.1s, color 0.1s;
+    border-bottom: 1px solid black;
+}
+
+.project-link:hover {
+    background-color: black;
+    color: white;
+}
+
+@media screen and (max-width: 768px) {
+    .project-column {
+        flex-direction: column;
     }
 
+    .content-pane, .text-pane {
+        flex: 1;
+        height: auto;
+        position: relative !important;
+    }
 }

@@ -29,6 +29,29 @@ $fg-color: var(--fg-color, white);
     font-style: normal;
 }
 
+nav {
+    border-right: 1px dashed $fg-color;
+    background-color: $bg-color;
+    flex: 0.1; 
+    height: 100vh;
+    font-family: monospace;
+    position: sticky;
+    color: $fg-color;
+    top: 0;
+    left: 0;
+}
+
+.nav-top {
+    background-color: $fg-color;
+    color: $bg-color;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+main {
+    flex: 0.9; 
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;

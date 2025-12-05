@@ -1,28 +1,31 @@
 <ng-container *ngIf="project">
     <div class="project-column">
-        <div class="left-pane">
+        <div class="text-pane">
+            <div class="text-heading">
+                <h3>{{project?.title}}</h3>
+            </div>
+            <div style="padding: 1rem;">
+                <ng-container *ngFor="let block of project?.description">
+                    <p *ngIf="block._type === 'block'">
+                        <ng-container *ngFor="let child of block.children">
+                            <span [innerHTML]="renderSpan(child, block)"></span>
+                        </ng-container>
+                    </p>
+                </ng-container>
+            </div>
+        </div>
+        <div class="content-pane">
             <ng-container *ngIf="projectImages && projectImages.length > 0">
                 <ng-container *ngFor="let image of projectImages">
                         <grid-item [image]="image" [showDefault]="true"></grid-item>
-                        <!-- <img [src]="image.imageUrl" [alt]="image.alt || project?.title" style="width: 100%;"/> -->
+                        <!-- <img [src]="image.imageUrl" [alt]="image.alt || project?.title"/> -->
                     </ng-container>
             </ng-container>
         </div>
-        <div class="right-pane">
-            <window>
-                <div style="padding: 1rem">
-                <h3 style="margin-top: 0;">{{project?.title}}</h3>
-                    <ng-container *ngFor="let block of project?.description">
-                        <p *ngIf="block._type === 'block'">
-                            <ng-container *ngFor="let child of block.children">
-                                <span [innerHTML]="renderSpan(child, block)"></span>
-                            </ng-container>
-                        </p>
-                    </ng-container>
-                </div>
-            </window>
-        </div>
+
     </div>
 </ng-container>
 
-<ng-template #text></ng-template>
+<ng-container *ngIf="!project && notFound">
+    <img src="images/fly_1.gif" alt="not found" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"/>
+</ng-container>

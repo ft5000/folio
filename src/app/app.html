@@ -1,7 +1,16 @@
 <cursor *ngIf="!isMobile"></cursor>
 <nav-bar></nav-bar>
 <img class="arrow-down" [ngClass]="{'show': canScrollDown}" src="images/arrow_down_1.png"/>
-<div class="gradient" [ngClass]="{'show': canScrollDown}"></div>
-<main class="main">
-  <router-outlet />
-</main>
+<div class="gradient" [ngClass]="{'show': canScrollDown && isMobile}"></div>
+<div class="site-container" style="display: flex; flex-direction: row;">
+  <nav class="nav">
+    <div class="nav-top">ft_5000.online</div>
+    <p>About</p>
+    <p>Projects</p>
+    <p>Sketches</p>
+    <p>Image Crawl</p>
+  </nav>
+  <main class="main">
+    <router-outlet />
+  </main>
+</div>

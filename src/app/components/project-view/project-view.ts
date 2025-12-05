@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SanityService } from '../../services/sanity';
 import { Block, ProjectDTO, ProjectImageDTO } from '../../../types/project';
@@ -14,11 +14,13 @@ import { filter, Subscription } from 'rxjs';
   imports: [CommonModule, Grid, GridItem, WindowComponent],
   templateUrl: './project-view.html',
   styleUrl: './project-view.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ProjectView implements OnInit {
   private projectTitle: string | null = null;
   public project: ProjectDTO | null = null;
   public projectImages: ImageDTO[] = [];
+  public notFound: boolean = false;
 
   subscribers: Subscription = new Subscription();
 
@@ -35,14 +37,18 @@ export class ProjectView implements OnInit {
   }
 
   private load(): void {
-    document.body.style.setProperty('--fg-color', 'white');
-    document.body.style.setProperty('--bg-color', 'black');
+    document.body.style.setProperty('--fg-color', 'black');
+    document.body.style.setProperty('--bg-color', 'white');
 
     const id = this.getProjectIdFromRoute();
     this.projectTitle = id ? this.formatTitleFromId(id) : null;
 
     if (this.projectTitle) {
       this.sanityService.getProjectByTitle(this.projectTitle).subscribe((project: ProjectDTO) => {
+        if (!project) {
+          this.notFound = true;
+          return;
+        }
         this.project = project;
         if (project && project.images) {
           this.projectImages = project.images.map((pi: ProjectImageDTO) => pi.image);
@@ -69,7 +75,7 @@ export class ProjectView implements OnInit {
         if (markDef) {
           switch (markDef._type) {
             case 'link':
-              text = `<a href="${markDef.href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+              text = `<a href="${markDef.href}" class="project-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
               break;
           }
         } else {

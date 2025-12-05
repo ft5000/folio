@@ -29,7 +29,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: color-mix(in srgb, $bg-color 50%, transparent);
+    background-color: color-mix(in srgb, black 50%, transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
     box-sizing: border-box;
@@ -45,7 +45,7 @@
     left: 0;
     padding: 1rem;
     bottom: 0;
-    color: $fg-color;
+    color: white;
 
     h3 {
         margin: 0;
