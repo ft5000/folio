@@ -3,7 +3,8 @@
 </button>
 <nav class="nav-main" [ngClass]="{'hide': !expanded}">
     <div class="tree-container" [ngClass]="{'show': expanded}" #tree>
-        <tree-item [name]="NavItem.About" [link]="'/about'"></tree-item>
+        <nav-links></nav-links>
+        <!-- <tree-item [name]="NavItem.About" [link]="'/about'"></tree-item>
         <tree-item [name]="NavItem.Projects">
             <ng-container *ngIf="projectTitles.length === 0; else projectList">
                 <tree-item [name]="'Coming soon'"></tree-item>
@@ -15,6 +16,6 @@
             </ng-template>
         </tree-item>
         <tree-item [name]="NavItem.Sketches" [link]="'/sketches'"></tree-item>
-        <tree-item [name]="NavItem.Crawl" [link]="'/crawl'"></tree-item>
+        <tree-item [name]="NavItem.Crawl" [link]="'/crawl'"></tree-item> -->
     </div>
 </nav>

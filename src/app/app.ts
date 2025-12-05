@@ -4,17 +4,21 @@ import { CommonModule } from '@angular/common';
 import { P5PathsComponent } from './components/p5-paths.component';
 import { NavBar } from './components/nav-bar/nav-bar';
 import { filter, Subscription } from 'rxjs';
+import { NavLinks } from './components/nav-links/nav-links';
+
+const mobileLayoutBreakpoint = 768;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, P5PathsComponent, NavBar],
+  imports: [RouterOutlet, CommonModule, P5PathsComponent, NavBar, NavLinks],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
 export class App implements OnInit, AfterViewInit {
   public isMobile: boolean = false;
   public canScrollDown: boolean = false;
+  public useMobileLayout: boolean = false;
 
   subscribers: Subscription = new Subscription();
 
@@ -23,6 +27,7 @@ export class App implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    this.checkUseMobileLayout();
 
     this.subscribers.add(this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -41,11 +46,17 @@ export class App implements OnInit, AfterViewInit {
   @HostListener('window:resize', [])
   onresize() {
     this.updateCanScrollDown();
+    this.checkUseMobileLayout();
   }
 
   @HostListener('window:orientationchange', [])
   onorientationchange() {
     this.updateCanScrollDown();
+    this.checkUseMobileLayout();
+  }
+
+  private checkUseMobileLayout(): void {
+    this.useMobileLayout = window.innerWidth < mobileLayoutBreakpoint;
   }
   
 

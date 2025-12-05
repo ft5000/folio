@@ -36,20 +36,48 @@ nav {
     height: 100vh;
     font-family: monospace;
     position: sticky;
+    min-width: 192px;
     color: $fg-color;
     top: 0;
     left: 0;
+
+    .nav-links {
+        margin-top: 1rem;
+        margin-left: 0.5rem;
+    }
 }
 
 .nav-top {
-    background-color: $fg-color;
-    color: $bg-color;
-    padding: 0.5rem;
-    text-align: center;
+    // background-color: $fg-color;
+    // color: $bg-color;
+    // padding: 0.3rem;
+    // text-align: center;
+    display: flex;
+    flex-direction: row;
+    font-size: 10pt;
+
+    .nav-top-l {
+        flex: 1;
+        padding: 0.5rem;
+    }
+
+    .nav-top-r {
+        flex: 0;
+        padding: 0.5rem;
+
+        i {
+            vertical-align: bottom;
+            transition: transform 0.1s ease;
+        }
+
+        i.expanded {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 main {
-    flex: 0.9; 
+    flex: 1; 
 }
 
 body {
@@ -131,8 +159,8 @@ nav-bar {
     height: 5rem;
     background: linear-gradient(
     to top,
-    color-mix(in srgb, var(--bg-color), transparent 0%),
-    color-mix(in srgb, var(--bg-color), transparent 100%),
+    color-mix(in srgb, black, transparent 0%),
+    color-mix(in srgb, black, transparent 100%),
     );
     pointer-events: none;
     opacity: 0;

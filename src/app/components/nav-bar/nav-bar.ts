@@ -5,17 +5,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Subscriber, Subscription } from 'rxjs';
 import { SanityService } from '../../services/sanity';
-
-export enum NavItem {
-  About = 'About',
-  Projects = 'Projects',
-  Sketches = 'Sketches',
-  Crawl = 'Image Crawl'
-}
+import { NavItem, NavLinks } from '../nav-links/nav-links';
 
 @Component({
   selector: 'nav-bar',
-  imports: [CommonModule, TreeItem],
+  imports: [CommonModule, TreeItem, NavLinks],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss',
 })
@@ -30,7 +24,7 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
 
   subscribers: Subscription = new Subscription();
 
-  constructor(private router: Router, private sanityService: SanityService) {
+  constructor(private router: Router) {
   }
 
   ngOnDestroy(): void {
@@ -43,11 +37,6 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((event: NavigationEnd) => {
       this.expanded = false;
     }));
-    this.sanityService.getAllProjectTitles()
-      .pipe(filter((titles) => titles != null))
-      .subscribe(titles => {
-        this.projectTitles = titles;
-      });
   }
 
   @HostListener('click', ['$event'])
@@ -69,9 +58,5 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
 
   public toggleExpand() {
     this.expanded = !this.expanded;
-  }
-
-  public getProjectLink(title: string): string {
-    return '/projects/' + title.toLowerCase().replace(/ /g, '-');
   }
 }
