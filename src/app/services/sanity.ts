@@ -108,6 +108,7 @@ export class SanityService {
       _rev,
       title,
       description,
+      tags,
       images[]{
         _key,
         title,

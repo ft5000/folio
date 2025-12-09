@@ -1,0 +1,15 @@
+<nav [ngClass]="{'expanded': expanded}">
+    <div class="nav-top">
+      <div class="nav-top-l" [ngClass]="{'collapsed': !expanded}">
+        <!-- <span>ft_5000.online</span> -->
+      </div> 
+      <div class="nav-top-r">
+        <button (click)="toggleExpanded()">
+          <i class="fas" [ngClass]="expanded ? 'fa-times expanded' : 'fa-bars'"></i>
+        </button>
+      </div>
+    </div>
+    <div class="nav-links" [ngClass]="{'hide': !expanded}">
+      <nav-links></nav-links>
+    </div>
+</nav>

@@ -3,19 +3,7 @@
 <img class="arrow-down" [ngClass]="{'show': canScrollDown}" src="images/arrow_down_1.png"/>
 <div class="gradient" [ngClass]="{'show': canScrollDown && isMobile}"></div>
 <div class="site-container" style="display: flex; flex-direction: row;">
-  <nav *ngIf="!useMobileLayout">
-    <div class="nav-top">
-      <div class="nav-top-l">
-        <!-- ft_5000.online -->
-      </div> 
-      <div class="nav-top-r">
-        <!-- <i class="fas fa-chevron-right"></i> -->
-      </div>
-    </div>
-    <div class="nav-links">
-      <nav-links></nav-links>
-    </div>
-  </nav>
+  <side-bar *ngIf="!useMobileLayout"></side-bar>
   <main class="main">
     <router-outlet />
   </main>

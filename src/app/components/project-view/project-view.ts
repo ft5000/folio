@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SanityService } from '../../services/sanity';
 import { Block, ProjectDTO, ProjectImageDTO } from '../../../types/project';
@@ -16,15 +16,28 @@ import { filter, Subscription } from 'rxjs';
   styleUrl: './project-view.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class ProjectView implements OnInit {
+export class ProjectView implements OnInit, AfterViewInit {
+  @ViewChild('tagContainer', { static: false }) tagContainer!: ElementRef;
+
   private projectTitle: string | null = null;
   public project: ProjectDTO | null = null;
   public projectImages: ImageDTO[] = [];
   public notFound: boolean = false;
+  private viewInitialized: boolean = false;
+  public tagsAppended: boolean = false;
+  public isAnimating: boolean = false;
 
   subscribers: Subscription = new Subscription();
 
   constructor(private activatedRoute: ActivatedRoute, private sanityService: SanityService) {
+  }
+
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+
+    if (this.project) {
+      this.appendTagElements();
+    }
   }
 
   ngOnInit(): void {
@@ -40,6 +53,14 @@ export class ProjectView implements OnInit {
     document.body.style.setProperty('--fg-color', 'black');
     document.body.style.setProperty('--bg-color', 'white');
 
+    // Reset animation by toggling the flag
+    this.isAnimating = false;
+
+    if (this.tagContainer) {
+      const container = this.tagContainer.nativeElement as HTMLElement;
+      container.innerHTML = '';
+    }
+
     const id = this.getProjectIdFromRoute();
     this.projectTitle = id ? this.formatTitleFromId(id) : null;
 
@@ -50,10 +71,51 @@ export class ProjectView implements OnInit {
           return;
         }
         this.project = project;
+        
+        // Trigger animation
+        setTimeout(() => {
+          this.isAnimating = true;
+        }, 50);
+        
+        // Only append tags if view is initialized
+        if (this.viewInitialized) {
+          this.appendTagElements();
+        }
+        
         if (project && project.images) {
           this.projectImages = project.images.map((pi: ProjectImageDTO) => pi.image);
         }
       });
+    }
+  }
+
+  private appendTagElements(): void {
+    const tagsPerGroup = window.innerWidth > 768 ? 5 : 3;
+    if (this.project?.tags) {
+      const container = this.tagContainer.nativeElement as HTMLElement;
+      let meta: HTMLDivElement | null = null;
+      this.project.tags.forEach((tag, i) => {
+        const span = document.createElement('span');
+        const symbol = document.createElement('span');
+        symbol.textContent = "•";
+        span.textContent = tag;
+
+        if (i % tagsPerGroup === 0) {
+          meta = document.createElement('div');
+          meta.classList.add('meta');
+          container.appendChild(meta);
+        }
+
+        if (meta) {
+          meta.appendChild(span);
+
+          const isLastInGroup = (i % tagsPerGroup === tagsPerGroup - 1) || (i === this.project!.tags.length - 1);
+          if (!isLastInGroup) {
+            meta.appendChild(symbol);
+          }
+        }
+      });
+      this.tagsAppended = true;
     }
   }
 

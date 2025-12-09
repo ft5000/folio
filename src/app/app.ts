@@ -5,13 +5,14 @@ import { P5PathsComponent } from './components/p5-paths.component';
 import { NavBar } from './components/nav-bar/nav-bar';
 import { filter, Subscription } from 'rxjs';
 import { NavLinks } from './components/nav-links/nav-links';
+import { SideBar } from './components/side-bar/side-bar';
 
 const mobileLayoutBreakpoint = 768;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, P5PathsComponent, NavBar, NavLinks],
+  imports: [RouterOutlet, CommonModule, P5PathsComponent, NavBar, SideBar],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })

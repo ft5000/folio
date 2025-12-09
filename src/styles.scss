@@ -29,6 +29,20 @@ $fg-color: var(--fg-color, white);
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Karrik Regular';
+    src: url('../public/fonts/Karrik-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Coconat Regular';
+    src: url('../public/fonts/Coconat-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 nav {
     border-right: 1px dashed $fg-color;
     background-color: $bg-color;

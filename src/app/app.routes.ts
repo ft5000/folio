@@ -11,10 +11,12 @@ export const routes: Routes = [
     },
     {
         path: 'about',
-        loadComponent: () => import('./components/about-view/about-view').then(m => m.AboutView)
+        loadComponent: () => import('./components/about-view/about-view').then(m => m.AboutView),
+        runGuardsAndResolvers: 'always'
     },
     {
         path: 'projects/:projectId',
-        loadComponent: () => import('./components/project-view/project-view').then(m => m.ProjectView)
+        loadComponent: () => import('./components/project-view/project-view').then(m => m.ProjectView),
+        runGuardsAndResolvers: 'always'
     }
 ];

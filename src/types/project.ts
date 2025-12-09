@@ -9,6 +9,7 @@ export interface ProjectDTO {
     title: string;
     description: Block[];
     images: ProjectImageDTO[];
+    tags: string[];
 }
 
 export interface ProjectImageDTO {

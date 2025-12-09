@@ -1,17 +1,39 @@
 <ng-container *ngIf="project">
     <div class="project-column">
         <div class="text-pane">
-            <div class="text-heading">
-                <h3>{{project?.title}}</h3>
-            </div>
-            <div style="padding: 1rem;">
-                <ng-container *ngFor="let block of project?.description">
-                    <p *ngIf="block._type === 'block'">
-                        <ng-container *ngFor="let child of block.children">
-                            <span [innerHTML]="renderSpan(child, block)"></span>
-                        </ng-container>
-                    </p>
+            <div class="text-container" [class.fade-in]="isAnimating">
+                <div class="text-heading">
+                    <h3>{{project?.title}}</h3>
+                </div>
+                <div class="text-body">
+                    <ng-container *ngFor="let block of project?.description">
+                        <p *ngIf="block._type === 'block'">
+                            <ng-container *ngFor="let child of block.children">
+                                <span [innerHTML]="renderSpan(child, block)"></span>
+                            </ng-container>
+                        </p>
+                    </ng-container>
+                </div>
+                <div style="padding: 2rem; padding-top: 0;" #tagContainer></div>
+                <div style="padding: 2rem; padding-top: 0;">
+                    <div style="border-bottom: 1px black dashed; width: 100%;"></div>
+                </div>
+            <!-- <div class="meta">
+                <ng-container *ngFor="let tag of project?.tags; let last = last">
+                    <span>{{tag}}</span>
+                    <span *ngIf="!last">+</span>
                 </ng-container>
+            </div> -->
+            <!-- <div style="display: flex; flex-direction: column; width: 100%; padding-bottom: 2rem;">
+                <div class="text-meta">
+                    <div class="meta-tag" style="flex: 0.4;"><span>Tools</span></div>
+                    <div class="meta-tag"><span>HTML, CSS, TypeScript</span></div>
+                </div>
+                <div class="text-meta">
+                    <div class="meta-tag" style="flex: 0.4;"><span>Year</span></div>
+                    <div class="meta-tag"><span>2024</span></div>
+                </div>
+            </div> -->
             </div>
         </div>
         <div class="content-pane">
