@@ -17,6 +17,5 @@ export const routes: Routes = [
     {
         path: 'projects/:projectId',
         loadComponent: () => import('./components/project-view/project-view').then(m => m.ProjectView),
-        runGuardsAndResolvers: 'always'
     }
 ];

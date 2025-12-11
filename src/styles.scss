@@ -43,6 +43,14 @@ $fg-color: var(--fg-color, white);
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Nimbus Sans Regular';
+    src: url('../public/fonts/NimbusSanL-Reg.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 nav {
     border-right: 1px dashed $fg-color;
     background-color: $bg-color;
@@ -173,7 +181,7 @@ nav-bar {
     height: 5rem;
     background: linear-gradient(
     to top,
-    color-mix(in srgb, black, transparent 0%),
+    color-mix(in srgb, black, transparent 50%),
     color-mix(in srgb, black, transparent 100%),
     );
     pointer-events: none;

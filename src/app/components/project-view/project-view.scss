@@ -8,6 +8,8 @@
 
 .text-container {
     opacity: 0;
+    padding: 3rem;
+    padding-top: 0;
 }
 
 .project-column {
@@ -16,10 +18,12 @@
     width: 100%;
     margin: auto;
     font-family: 'Necto Mono', monospace;
+    justify-content: center;
+    background-color: white;
 
     .content-pane {
         background-color: black;
-        flex: 0.45;
+        flex: 0.5;
         overflow-y: scroll;
         min-height: fit-content;
 
@@ -36,30 +40,29 @@
     }
 
     .text-pane {
-        flex: 0.55;
-        position: sticky;
+        flex: 0.5;
+        // position: sticky;
         top: 0;
         left: 0;
-        height: 100vh;
+        // height: 100vh;
         color: black;
         background-color: white;
+        font-size: 16px;
+        // overflow: auto;
 
         .text-heading {
             // border-bottom: 1px solid black;
             font-family: 'Coconat Regular', monospace;
-            padding: 0 2rem;
             margin-top: 2rem;
             
             h3 {
                 font-size: 1.6rem;
-                margin-bottom: 0;
-                font-size: 36pt;
+                margin-bottom: 1rem;
+                font-size: 42px;
             }
         }
 
         .text-body {
-            padding: 2rem;
-            padding-top: 1rem;
             line-height: 1.5;
 
             p:first-child {
@@ -104,14 +107,17 @@
 }
 
 .meta {
-    display:flex; 
-    flex-direction: row; 
-    justify-content: space-around; 
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     font-size: 9pt;
     margin: 0.5rem 0rem;
 
     span {
         white-space: nowrap;
+        font-family: 'Coconat Regular', monospace;
+        padding: 0.2rem 0.5rem;
     }
 }
 
@@ -120,6 +126,21 @@ span:has(.project-link) {
     margin-top: 1rem;
     width: 100%;
     display: block;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 0.5rem;
+}
+
+.image-header > img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    animation: headerFadeIn 0.5s ease forwards;
 }
 
 .project-link {
@@ -148,10 +169,25 @@ span:has(.project-link) {
         flex-direction: column;
     }
 
+    .text-pane {
+        min-height: 75vh;
+    }
+
     .content-pane, .text-pane {
         flex: 1;
         height: auto;
         position: relative !important;
+    }
+}
+
+@keyframes headerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

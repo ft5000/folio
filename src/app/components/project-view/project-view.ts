@@ -7,7 +7,7 @@ import { Grid } from '../grid/grid';
 import { GridItem } from '../grid-item/grid-item';
 import { ImageDTO } from '../../../types/image';
 import { WindowComponent } from '../window/window';
-import { filter, Subscription } from 'rxjs';
+import { BehaviorSubject, filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-project-view',
@@ -17,7 +17,6 @@ import { filter, Subscription } from 'rxjs';
   encapsulation: ViewEncapsulation.None,
 })
 export class ProjectView implements OnInit, AfterViewInit {
-  @ViewChild('tagContainer', { static: false }) tagContainer!: ElementRef;
 
   private projectTitle: string | null = null;
   public project: ProjectDTO | null = null;
@@ -27,6 +26,9 @@ export class ProjectView implements OnInit, AfterViewInit {
   public tagsAppended: boolean = false;
   public isAnimating: boolean = false;
 
+  private loaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public loaded$ = this.loaded.asObservable();
+
   subscribers: Subscription = new Subscription();
 
   constructor(private activatedRoute: ActivatedRoute, private sanityService: SanityService) {
@@ -34,10 +36,6 @@ export class ProjectView implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
-
-    if (this.project) {
-      this.appendTagElements();
-    }
   }
 
   ngOnInit(): void {
@@ -50,16 +48,10 @@ export class ProjectView implements OnInit, AfterViewInit {
   }
 
   private load(): void {
-    document.body.style.setProperty('--fg-color', 'black');
-    document.body.style.setProperty('--bg-color', 'white');
+    document.body.style.setProperty('--fg-color', 'white');
+    document.body.style.setProperty('--bg-color', 'black');
 
-    // Reset animation by toggling the flag
     this.isAnimating = false;
-
-    if (this.tagContainer) {
-      const container = this.tagContainer.nativeElement as HTMLElement;
-      container.innerHTML = '';
-    }
 
     const id = this.getProjectIdFromRoute();
     this.projectTitle = id ? this.formatTitleFromId(id) : null;
@@ -68,54 +60,20 @@ export class ProjectView implements OnInit, AfterViewInit {
       this.sanityService.getProjectByTitle(this.projectTitle).subscribe((project: ProjectDTO) => {
         if (!project) {
           this.notFound = true;
+          this.loaded.next(true);
           return;
         }
         this.project = project;
         
-        // Trigger animation
         setTimeout(() => {
           this.isAnimating = true;
         }, 50);
         
-        // Only append tags if view is initialized
-        if (this.viewInitialized) {
-          this.appendTagElements();
-        }
-        
         if (project && project.images) {
           this.projectImages = project.images.map((pi: ProjectImageDTO) => pi.image);
         }
+        this.loaded.next(true);
       });
-    }
-  }
-
-  private appendTagElements(): void {
-    const tagsPerGroup = window.innerWidth > 768 ? 5 : 3;
-    if (this.project?.tags) {
-      const container = this.tagContainer.nativeElement as HTMLElement;
-      let meta: HTMLDivElement | null = null;
-      this.project.tags.forEach((tag, i) => {
-        const span = document.createElement('span');
-        const symbol = document.createElement('span');
-        symbol.textContent = "•";
-        span.textContent = tag;
-
-        if (i % tagsPerGroup === 0) {
-          meta = document.createElement('div');
-          meta.classList.add('meta');
-          container.appendChild(meta);
-        }
-
-        if (meta) {
-          meta.appendChild(span);
-
-          const isLastInGroup = (i % tagsPerGroup === tagsPerGroup - 1) || (i === this.project!.tags.length - 1);
-          if (!isLastInGroup) {
-            meta.appendChild(symbol);
-          }
-        }
-      });
-      this.tagsAppended = true;
     }
   }
 

@@ -14,7 +14,7 @@ export class Grid implements OnDestroy, OnInit {
   private observer: IntersectionObserver | undefined;
   public cols: number = 1;
   @Input() maxCols: number = 4;
-  @Input() minColWidth: number = 200;
+  @Input() minColWidth: number = 250;
 
   @ContentChildren(TemplateRef) templates!: QueryList<TemplateRef<any>>;
   

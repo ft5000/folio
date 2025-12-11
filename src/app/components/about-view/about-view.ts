@@ -10,12 +10,16 @@ import { WindowComponent } from '../window/window';
 })
 export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private observer: IntersectionObserver | undefined;
+  private animationFrameId: number | null = null;
+  private glContext: WebGL2RenderingContext | null = null;
+  private startTime: number = 0;
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
 
   ngOnInit() {
     document.body.style.setProperty('--fg-color', 'white');
     document.body.style.setProperty('--bg-color', 'black');
+    this.startTime = 0;
   }
 
   ngAfterViewInit() {
@@ -54,6 +58,21 @@ if (aboutContent) {
 
   ngOnDestroy() {
     this.observer?.disconnect();
+    
+    // Cancel animation frame
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    
+    // Clean up WebGL context
+    if (this.glContext) {
+      const loseContext = this.glContext.getExtension('WEBGL_lose_context');
+      if (loseContext) {
+        loseContext.loseContext();
+      }
+      this.glContext = null;
+    }
   }
 
   public getSpacerContent(): string {
@@ -61,7 +80,34 @@ if (aboutContent) {
   }
 
   private async initWebGL() {
-    const canvas = document.getElementById('about-bg') as HTMLCanvasElement;
+    // Cancel any existing animation frame
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    
+    // Reset start time
+    this.startTime = 0;
+    
+    // Clean up existing WebGL context
+    if (this.glContext) {
+      const loseContext = this.glContext.getExtension('WEBGL_lose_context');
+      if (loseContext) {
+        loseContext.loseContext();
+      }
+      this.glContext = null;
+    }
+    
+    // Remove existing canvas and create a new one
+    const existingCanvas = document.getElementById('about-bg');
+    if (existingCanvas) {
+      existingCanvas.remove();
+    }
+    
+    const canvas = this.renderer.createElement('canvas');
+    this.renderer.setAttribute(canvas, 'id', 'about-bg');
+    this.renderer.appendChild(this.elementRef.nativeElement, canvas);
+    
     if (!canvas) return;
 
     const dpr = window.devicePixelRatio || 1;
@@ -79,6 +125,9 @@ if (aboutContent) {
       console.error('WebGL 2 not supported');
       return;
     }
+    
+    // Store the context
+    this.glContext = gl;
     
     // Load shader files
     const vertResponse = await fetch('/shaders/about.vert');
@@ -176,15 +225,22 @@ if (aboutContent) {
     
     // Animation loop
     const render = (time: number) => {
+      // Set start time on first frame
+      if (this.startTime === 0) {
+        this.startTime = time;
+      }
+      
+      const elapsedTime = (time - this.startTime) * 0.001;
+      
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uResolution, canvas.width, canvas.height);
-      gl.uniform1f(uTime, time * 0.001);
+      gl.uniform1f(uTime, elapsedTime);
       
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      requestAnimationFrame(render);
+      this.animationFrameId = requestAnimationFrame(render);
     };
     
-    render(0);
+    this.animationFrameId = requestAnimationFrame(render);
   }
 
 }

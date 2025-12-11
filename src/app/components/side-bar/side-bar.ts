@@ -11,6 +11,8 @@ import { NavLinks } from '../nav-links/nav-links';
 export class SideBar {
   public expanded: boolean = true;
 
+  constructor() {}
+
   toggleExpanded(): void {
     this.expanded = !this.expanded;
   }

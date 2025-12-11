@@ -20,6 +20,7 @@ export class App implements OnInit, AfterViewInit {
   public isMobile: boolean = false;
   public canScrollDown: boolean = false;
   public useMobileLayout: boolean = false;
+  public currentRoute: string = '';
 
   subscribers: Subscription = new Subscription();
 
@@ -28,6 +29,17 @@ export class App implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    
+    // Track route changes to force component reconstruction
+    this.subscribers.add(
+      this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd)
+      ).subscribe((event: NavigationEnd) => {
+        this.currentRoute = event.urlAfterRedirects;
+        scrollTo(0, 0);
+      })
+    );
+
     this.checkUseMobileLayout();
 
     this.subscribers.add(this.router.events.pipe(
@@ -36,8 +48,6 @@ export class App implements OnInit, AfterViewInit {
       setTimeout(() => this.updateCanScrollDown(), 500);
     }));
   }
-
-  // Compute once and on viewport changes so Angular change detection updates the template.
 
   @HostListener('window:scroll', [])
   onscroll() {

@@ -29,6 +29,7 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscribers.unsubscribe();
+    document.body.style.overflow = '';
   }
 
   ngOnInit(): void {
@@ -36,6 +37,7 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       this.expanded = false;
+      document.body.style.overflow = '';
     }));
   }
 
@@ -58,5 +60,11 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
 
   public toggleExpand() {
     this.expanded = !this.expanded;
+
+    if (this.expanded) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 }

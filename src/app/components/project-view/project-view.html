@@ -1,6 +1,9 @@
 <ng-container *ngIf="project">
     <div class="project-column">
-        <div class="text-pane">
+        <div *ngIf="(loaded$ | async)" class="text-pane">
+            <div class="image-header">
+                <img [src]="projectImages[0].imageUrl" alt="">
+            </div>
             <div class="text-container" [class.fade-in]="isAnimating">
                 <div class="text-heading">
                     <h3>{{project?.title}}</h3>
@@ -14,9 +17,15 @@
                         </p>
                     </ng-container>
                 </div>
-                <div style="padding: 2rem; padding-top: 0;" #tagContainer></div>
-                <div style="padding: 2rem; padding-top: 0;">
+                <!-- <div style="padding: 2rem; padding-top: 0;" #tagContainer></div> -->
+                <!-- <div style="padding: 2rem; padding-top: 0;">
                     <div style="border-bottom: 1px black dashed; width: 100%;"></div>
+                </div> -->
+                <div style="border-bottom: 1px black dashed; width: 100%; margin-top: 1rem; margin-bottom: 1rem;"></div>
+                <div class="meta">
+                    <ng-container *ngFor="let tag of project?.tags">
+                        <span>{{tag}}</span>
+                    </ng-container>
                 </div>
             <!-- <div class="meta">
                 <ng-container *ngFor="let tag of project?.tags; let last = last">
@@ -35,15 +44,19 @@
                 </div>
             </div> -->
             </div>
+            <div class="image-container">
+                <ng-container *ngFor="let image of projectImages">
+                    <grid-item [image]="image" [showDefault]="true"></grid-item>
+                </ng-container>
+            </div>
         </div>
-        <div class="content-pane">
+        <!-- <div class="content-pane">
             <ng-container *ngIf="projectImages && projectImages.length > 0">
                 <ng-container *ngFor="let image of projectImages">
                         <grid-item [image]="image" [showDefault]="true"></grid-item>
-                        <!-- <img [src]="image.imageUrl" [alt]="image.alt || project?.title"/> -->
                     </ng-container>
             </ng-container>
-        </div>
+        </div> -->
 
     </div>
 </ng-container>
