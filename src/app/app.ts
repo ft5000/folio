@@ -3,9 +3,10 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { P5PathsComponent } from './components/p5-paths.component';
 import { NavBar } from './components/nav-bar/nav-bar';
-import { filter, Subscription } from 'rxjs';
+import { filter, Observable, Subscription } from 'rxjs';
 import { NavLinks } from './components/nav-links/nav-links';
 import { SideBar } from './components/side-bar/side-bar';
+import { SanityService } from './services/sanity';
 
 const mobileLayoutBreakpoint = 768;
 
@@ -24,7 +25,10 @@ export class App implements OnInit, AfterViewInit {
 
   subscribers: Subscription = new Subscription();
 
-  constructor(private router: Router) {
+  public loading$: Observable<boolean> | null = null;
+
+  constructor(private router: Router, private sanityService: SanityService) {
+    this.loading$ = this.sanityService.loading$;
   }
 
   ngOnInit(): void {

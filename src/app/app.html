@@ -1,5 +1,6 @@
 <cursor *ngIf="!isMobile"></cursor>
 <nav-bar></nav-bar>
+<span *ngIf="loading$ | async" class="loader"></span>
 <img class="arrow-down" [ngClass]="{'show': canScrollDown}" src="images/arrow_down_1.png"/>
 <div class="gradient" [ngClass]="{'show': canScrollDown && isMobile}"></div>
 <div class="site-container" style="display: flex; flex-direction: row;">

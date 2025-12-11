@@ -1,15 +1,21 @@
 @import '../../../styles.scss';
 
+$project-bg: var(--project-bg, white);
+$project-text: var(--project-text, black);
+$project-accent: var(--project-accent, black);
+
+
+
 
 ::selection {
-    background-color: black;
-    color: white;
+    background-color: $project-accent;
+    color: $project-bg;
 }
 
 .text-container {
     opacity: 0;
-    padding: 3rem;
-    padding-top: 0;
+    // padding: 3rem;
+    padding-bottom: 3rem;
 }
 
 .project-column {
@@ -19,7 +25,7 @@
     margin: auto;
     font-family: 'Necto Mono', monospace;
     justify-content: center;
-    background-color: white;
+    background-color: $project-bg;
 
     .content-pane {
         background-color: black;
@@ -41,23 +47,17 @@
 
     .text-pane {
         flex: 0.5;
-        // position: sticky;
         top: 0;
         left: 0;
-        // height: 100vh;
-        color: black;
-        background-color: white;
+        color: $project-text;
         font-size: 16px;
-        // overflow: auto;
 
         .text-heading {
-            // border-bottom: 1px solid black;
             font-family: 'Coconat Regular', monospace;
-            margin-top: 2rem;
+            color: $project-accent;
             
             h3 {
-                font-size: 1.6rem;
-                margin-bottom: 1rem;
+                margin: 1rem 0;
                 font-size: 42px;
             }
         }
@@ -69,36 +69,13 @@
                 margin-top: 0;
             }
         }
-
-        .text-meta {
-            position: relative;
-            margin-bottom: 0.5rem;
-            display: flex;
-            flex-direction: row;
-            margin: 0rem 2rem;
-            border-left: 1px solid black;
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-
-            .meta-tag {
-                align-self: flex-start;
-                flex: 1;
-                padding: 0.25rem;
-
-                span {
-                    margin-left: 0.5rem;
-                }
-            }
-
-            .meta-tag:not(:last-child) {
-                border-right: 1px solid black;
-            }
-        }
-
-        .text-meta:first-child {
-            border-top: 1px solid black;
-        }
     }
+}
+
+.line {
+    border-bottom: 1px $project-text dashed; 
+    width: 100%;
+    margin: 2rem 0;
 }
 
  .fade-in {
@@ -113,11 +90,18 @@
     justify-content: flex-start;
     font-size: 9pt;
     margin: 0.5rem 0rem;
+    color: $project-text;
 
     span {
         white-space: nowrap;
         font-family: 'Coconat Regular', monospace;
         padding: 0.2rem 0.5rem;
+    }
+
+    span:not(:first-child)::before {
+        content: '+';
+        display: inline-block;
+        margin-right: 1rem;
     }
 }
 
@@ -132,15 +116,23 @@ span:has(.project-link) {
     display: flex;
     flex-direction: column;
     row-gap: 0.5rem;
-    margin-top: 2rem;
     padding: 0.5rem;
+}
+
+.image-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    animation: headerFadeIn 0.5s ease forwards;
 }
 
 .image-header > img {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16/9;
-    animation: headerFadeIn 0.5s ease forwards;
+    user-select: none;
+    pointer-events: none;
+    display: block;
 }
 
 .project-link {
@@ -149,19 +141,14 @@ span:has(.project-link) {
     box-sizing: border-box;
     line-height: 1.2; 
     font-family: 'Necto Mono', monospace;
-    // padding: 0.2rem 0.2rem;
     text-decoration: underline;
+    color: $project-text;
     transition: color 0.1s ease, background-color 0.1s ease;
 }
 
 .project-link:hover {
-    background-color: $fg-color;
-    color: $bg-color;
-}
-
-.project-link:hover {
-    background-color: black;
-    color: white;
+    background-color: $project-text;
+    color: $project-bg;
 }
 
 @media screen and (max-width: 768px) {
@@ -177,6 +164,11 @@ span:has(.project-link) {
         flex: 1;
         height: auto;
         position: relative !important;
+    }
+
+    .text-container {
+        padding: 2rem;
+        padding-top: 0;
     }
 }
 

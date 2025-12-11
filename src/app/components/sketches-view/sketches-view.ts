@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { GridItem } from '../grid-item/grid-item';
 import { GridView } from '../../classes/grid-view';
 import { Grid } from '../grid/grid';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-sketches-view',
@@ -15,12 +16,15 @@ import { Grid } from '../grid/grid';
 export class SketchesView extends GridView implements OnInit {
   items: VideoDTO[] | null = null;
 
-  constructor(private sanity: SanityService) {
+  public loading$: Observable<boolean> | null = null;
+
+  constructor(private sanityService: SanityService) {
     super();
+    this.loading$ = this.sanityService.loading$;
   }
 
   ngOnInit(): void {
-    this.sanity.getAllVideos().subscribe((data: VideoDTO[]) => {
+    this.sanityService.getAllVideos().subscribe((data: VideoDTO[]) => {
       this.items = data;
       this.setupItemObserver();
     });

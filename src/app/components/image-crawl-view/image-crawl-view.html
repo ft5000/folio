@@ -1,12 +1,4 @@
-<div class="grid-container">
-    <!-- <ng-container *ngFor="let col of colArray; index as ci">
-      <div class="blog-grid">
-        <ng-container *ngFor="let image of images; index as i">
-          <grid-item *ngIf="i % cols === ci" [image]="image"></grid-item>
-        </ng-container>
-      </div>
-    </ng-container> -->
-
+<div *ngIf="!(loading$ | async)" class="grid-container">
     <grid [maxCols]="3">
       <ng-template *ngFor="let image of images">
         <grid-item [image]="image"></grid-item>

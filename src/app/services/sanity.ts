@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@sanity/client';
 import groq from 'groq';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ImageDTO } from '../../types/image';
 import { VideoDTO } from '../../types/video';
 import { ProjectDTO } from '../../types/project';
@@ -17,19 +17,25 @@ export class SanityService {
     useCdn: false, // Disable CDN to avoid CORS issues in development
   });
 
+  private loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public loading$ = this.loading.asObservable();
+
   public getPosts(): Observable<ImageDTO> {
+    this.loading.next(true);
     const query = groq`*[_type == "blogPost"]{title, slug, body}`;
     return new Observable<any>(observer => {
       this.client.fetch(query)
         .then(data => {
           observer.next(data);
+          this.loading.next(false);
           observer.complete();
         })
-        .catch(err => observer.error(err));
+        .catch(err => { observer.error(err); this.loading.next(false); });
     });
   }
 
   public getAllImages(): Observable<ImageDTO[]> {
+    this.loading.next(true);
     const query = groq`*[_type == "imagePost"]{
       _id,
       title,
@@ -42,13 +48,15 @@ export class SanityService {
       this.client.fetch(query)
       .then(data => {
         observer.next(data);
+        this.loading.next(false);
         observer.complete();
       })
-      .catch(err => observer.error(err));
+      .catch(err => { observer.error(err); this.loading.next(false); });
     });
   }
 
   public getImageByTitle(title: string): Observable<ImageDTO> {
+    this.loading.next(true);
     const query = groq`*[_type == "imagePost" && title == $title][0]{
       _id,
       title,
@@ -61,13 +69,15 @@ export class SanityService {
       this.client.fetch(query, { title })
         .then(data => {
           observer.next(data);
+          this.loading.next(false);
           observer.complete();
         })
-        .catch(err => observer.error(err));
+        .catch(err => { observer.error(err); this.loading.next(false); });
     });
   }
 
   public getAllVideos(): Observable<VideoDTO[]> {
+    this.loading.next(true);
     const query = groq`*[_type == "videoPost"]{
       _id,
       title,
@@ -79,13 +89,15 @@ export class SanityService {
       this.client.fetch(query)
       .then(data => {
         observer.next(data);
+        this.loading.next(false);
         observer.complete();
       })
-      .catch(err => observer.error(err));
+      .catch(err => { observer.error(err); this.loading.next(false); });
     });
   }
 
   public getAllProjectTitles(): Observable<string[]> {
+    this.loading.next(true);
     const query = groq`*[_type == "project"]{
       title
     } | order(title asc)`;
@@ -94,19 +106,24 @@ export class SanityService {
       .then(data => {
         const titles = data.map((item: any) => item.title);
         observer.next(titles);
+        this.loading.next(false);
         observer.complete();
       })
-      .catch(err => observer.error(err));
+      .catch(err => { observer.error(err); this.loading.next(false); });
     });
   }
 
   public getProjectByTitle(title: string): Observable<ProjectDTO> {
+    this.loading.next(true);
     const query = groq`*[_type == "project" && title == $title][0]{
       _id,
       _createdAt,
       _updatedAt,
       _rev,
       title,
+      headerImage{
+        "imageUrl": asset->url
+      },
       description,
       tags,
       images[]{
@@ -115,22 +132,20 @@ export class SanityService {
         alt,
         caption,
         publishedAt,
-        "image": {
-          title,
-          "imageUrl": image.asset->url,
-          alt,
-          caption,
-          publishedAt
-        }
-      }
+        "imageUrl": image.asset->url
+      },
+      "bgColor": bgColor.hex,
+      "textColor": textColor.hex,
+      "accentColor": accentColor.hex
     }`;
     return new Observable<ProjectDTO>(observer => {
       this.client.fetch(query, { title })
       .then(data => {
         observer.next(data);
+        this.loading.next(false);
         observer.complete();
       })
-      .catch(err => observer.error(err));
+      .catch(err => {observer.error(err); this.loading.next(false);});
     });
   }
 }

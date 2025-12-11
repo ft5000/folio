@@ -1,8 +1,8 @@
 <ng-container *ngIf="project">
     <div class="project-column">
-        <div *ngIf="(loaded$ | async)" class="text-pane">
-            <div class="image-header">
-                <img [src]="projectImages[0].imageUrl" alt="">
+        <div *ngIf="!(loading$ | async)" class="text-pane">
+            <div *ngIf="headerImage" class="image-header">
+                <img [src]="headerImage?.imageUrl" alt="">
             </div>
             <div class="text-container" [class.fade-in]="isAnimating">
                 <div class="text-heading">
@@ -17,50 +17,22 @@
                         </p>
                     </ng-container>
                 </div>
-                <!-- <div style="padding: 2rem; padding-top: 0;" #tagContainer></div> -->
-                <!-- <div style="padding: 2rem; padding-top: 0;">
-                    <div style="border-bottom: 1px black dashed; width: 100%;"></div>
-                </div> -->
-                <div style="border-bottom: 1px black dashed; width: 100%; margin-top: 1rem; margin-bottom: 1rem;"></div>
+                <div class="line"></div>
                 <div class="meta">
                     <ng-container *ngFor="let tag of project?.tags">
                         <span>{{tag}}</span>
                     </ng-container>
                 </div>
-            <!-- <div class="meta">
-                <ng-container *ngFor="let tag of project?.tags; let last = last">
-                    <span>{{tag}}</span>
-                    <span *ngIf="!last">+</span>
-                </ng-container>
-            </div> -->
-            <!-- <div style="display: flex; flex-direction: column; width: 100%; padding-bottom: 2rem;">
-                <div class="text-meta">
-                    <div class="meta-tag" style="flex: 0.4;"><span>Tools</span></div>
-                    <div class="meta-tag"><span>HTML, CSS, TypeScript</span></div>
-                </div>
-                <div class="text-meta">
-                    <div class="meta-tag" style="flex: 0.4;"><span>Year</span></div>
-                    <div class="meta-tag"><span>2024</span></div>
-                </div>
-            </div> -->
             </div>
-            <div class="image-container">
+            <div *ngIf="projectImages && projectImages.length > 0" class="image-container">
                 <ng-container *ngFor="let image of projectImages">
                     <grid-item [image]="image" [showDefault]="true"></grid-item>
                 </ng-container>
             </div>
         </div>
-        <!-- <div class="content-pane">
-            <ng-container *ngIf="projectImages && projectImages.length > 0">
-                <ng-container *ngFor="let image of projectImages">
-                        <grid-item [image]="image" [showDefault]="true"></grid-item>
-                    </ng-container>
-            </ng-container>
-        </div> -->
-
     </div>
 </ng-container>
 
-<ng-container *ngIf="!project && notFound">
+<ng-container *ngIf="!(loading$ | async) && notFound">
     <img src="images/fly_1.gif" alt="not found" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"/>
 </ng-container>

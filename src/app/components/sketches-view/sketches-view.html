@@ -1,8 +1,10 @@
-<div class="grid-container">
-    <grid [maxCols]="3">
-        <ng-template *ngFor="let item of items">
-            <grid-item [video]="item"></grid-item>
-        </ng-template>
-    </grid>
-</div>
+<ng-container *ngIf="!(loading$ | async)">
+    <div class="grid-container">
+        <grid [maxCols]="3">
+            <ng-template *ngFor="let item of items">
+                <grid-item [video]="item"></grid-item>
+            </ng-template>
+        </grid>
+    </div>
+</ng-container>
 

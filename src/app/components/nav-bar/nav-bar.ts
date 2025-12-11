@@ -45,6 +45,7 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
   onClick(event: MouseEvent) {
     if (this.expanded && !this.tree.nativeElement.contains(event.target) && !(event.target as HTMLElement).closest('.nav-button')) {
       this.expanded = false;
+      document.body.style.overflow = '';
     }
   }
 
@@ -64,6 +65,7 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
     if (this.expanded) {
       document.body.style.overflow = 'hidden';
     } else {
+      console.log('collapsing');
       document.body.style.overflow = '';
     }
   }

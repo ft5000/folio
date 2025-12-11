@@ -8,8 +8,12 @@ export interface ProjectDTO {
     _updatedAt: string;
     title: string;
     description: Block[];
-    images: ProjectImageDTO[];
+    headerImage: HeaderImageDTO;
+    images: ImageDTO[];
     tags: string[];
+    bgColor: string;
+    textColor: string;
+    accentColor: string;
 }
 
 export interface ProjectImageDTO {
@@ -18,6 +22,10 @@ export interface ProjectImageDTO {
     image: ImageDTO;
     publishedAt: string;
     title: string;
+}
+
+export interface HeaderImageDTO {
+    imageUrl: string;
 }
 
 export interface Block {
