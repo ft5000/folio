@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
     selector: 'cursor',
@@ -18,21 +18,17 @@ import { Component, OnInit, OnDestroy, ElementRef, AfterViewInit } from '@angula
         }
     `],
 })
-export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class P5PathsComponent implements OnDestroy, AfterViewInit {
     private p5Instance: any = null;
+    private hovering: boolean = false;
+    private mouseListener: any;
 
     constructor(private elementRef: ElementRef) {}
 
-    ngOnInit() {
-        window.addEventListener('resize', () => {
-            if (this.p5Instance) {
-                this.p5Instance.remove();
-                this.createSketch();
-            }
-        });
-    }
-
     ngAfterViewInit() {
+        this.mouseListener = addEventListener('mouseover', (event: MouseEvent) => {
+            this.hovering = !!(event.target as HTMLElement).closest('a, button, .grid-item');
+        });
         this.createSketch();
     }
 
@@ -40,6 +36,7 @@ export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.p5Instance) {
             this.p5Instance.remove();
         }
+        this.mouseListener?.remove();
     }
 
     private createSketch() {
@@ -50,6 +47,9 @@ export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
                 let w: number;
                 let h: number;
                 let ts: number;
+                const hs = 32;
+                const nhs = 12;
+                let cs = nhs;
 
                 p.setup = () => {
                     w = window.innerWidth;
@@ -59,7 +59,13 @@ export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
                     canvas.parent(this.elementRef.nativeElement.querySelector('.p5-container'));
                     p.textFont('Consolas');
                     p.textSize(9);
-                    // p.noiseSeed(5);
+                };
+
+                p.windowResized = () => {
+                    w = window.innerWidth;
+                    h = window.innerHeight;
+                    ts = w * 0.05;
+                    p.resizeCanvas(w, h);
                 };
 
                 p.draw = () => {
@@ -72,6 +78,7 @@ export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
                             const n = p.noise(x * 0.125, y * 0.125);
 
                             if (d < ts * 5 && n < 0.25 && !this.isEdge(x, y)) {
+                                p.strokeWeight(1);
                                 p.fill(255);
                                 p.noStroke();
                                 p.circle(x, y, 4);
@@ -83,9 +90,19 @@ export class P5PathsComponent implements OnInit, OnDestroy, AfterViewInit {
                         }
                     }
 
-                    p.fill(255);
-                    p.noStroke();
-                    p.circle(p.mouseX, p.mouseY, 10);
+                    p.strokeWeight(2);
+
+                    if (this.hovering) {   
+                        p.fill(255);
+                        p.stroke(255);
+                    }
+                    else {
+                        p.fill(0);
+                        p.stroke(255);
+                    }
+                    
+                    cs = p.lerp(cs, this.hovering ? hs : nhs, 0.2);
+                    p.circle(p.mouseX, p.mouseY, cs);
                 };
             };
 

@@ -63,7 +63,6 @@ export class NavBar implements OnInit, AfterViewInit, OnDestroy {
     if (this.expanded) {
       document.body.style.overflow = 'hidden';
     } else {
-      console.log('collapsing');
       document.body.style.overflow = '';
     }
   }

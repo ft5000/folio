@@ -25,7 +25,7 @@
 }
 
 .about-container {
-    font-family: monospace;
+    font-family: 'Necto Mono', monospace;
     width: 100%;
     color: $fg-color;
     display: flex;
@@ -42,7 +42,8 @@
 
     a:hover {
         text-decoration: underline;
-        color: purple;
+        color: $bg-color;
+        background-color: $fg-color;
     }
 
     p {
@@ -60,6 +61,7 @@ pre {
     display: block;
     width: fit-content;
     font-size: clamp(7pt, 2vw, 10pt);
+    font-family: monospace;
     color: $fg-color;
     margin: 0;
 }
