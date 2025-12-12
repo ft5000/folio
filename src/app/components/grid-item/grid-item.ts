@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ContentChildren, Input, QueryList, TemplateRef, ViewChild } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, ContentChildren, Input, QueryList, ViewChild } from '@angular/core';
 import { ImageDTO } from '../../../types/image';
-import moment from 'moment';
 import { VideoDTO } from '../../../types/video';
 import { VideoContainer } from '../video-container/video-container';
 
@@ -25,6 +24,8 @@ export class GridItem {
   @Input() showTitle: boolean = true;
   @Input() showPublishDate: boolean = true;
   hovered: boolean = false;
+
+  private datePipe = new DatePipe('en-US');
 
   @ContentChildren('content', { descendants: true })
   content!: QueryList<any>;
@@ -53,9 +54,9 @@ export class GridItem {
   public get publishedDate(): string {
     switch (this.gridItemType) {
       case GridItemType.Image:
-        return moment(this.image!.publishedAt).format('YYYY/MM/DD');
+        return this.datePipe.transform(this.image!.publishedAt, 'yyyy-MM-dd') || '';
       case GridItemType.Video:
-        return moment(this.video!.publishedAt).format('YYYY/MM/DD');
+        return this.datePipe.transform(this.video!.publishedAt, 'yyyy-MM-dd') || '';
       default:
         return '';
     }
