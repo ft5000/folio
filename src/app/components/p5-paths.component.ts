@@ -47,7 +47,7 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
                 let w: number;
                 let h: number;
                 let ts: number;
-                const hs = 32;
+                const hs = 42;
                 const nhs = 12;
                 let cs = nhs;
 
@@ -57,7 +57,7 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
                     ts = w * 0.05;
                     const canvas = p.createCanvas(w, h);
                     canvas.parent(this.elementRef.nativeElement.querySelector('.p5-container'));
-                    p.textFont('Consolas');
+                    p.textFont('monospace');
                     p.textSize(9);
                 };
 
@@ -93,11 +93,11 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
                     p.strokeWeight(2);
 
                     if (this.hovering) {   
-                        p.fill(255);
+                        p.fill(0);
                         p.stroke(255);
                     }
                     else {
-                        p.fill(0);
+                        p.fill(255);
                         p.stroke(255);
                     }
                     
