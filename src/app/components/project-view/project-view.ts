@@ -3,15 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { SanityService } from '../../services/sanity';
 import { Block, HeaderImageDTO, ProjectDTO } from '../../../types/project';
 import { CommonModule } from '@angular/common';
-import { Grid } from '../grid/grid';
 import { GridItem } from '../grid-item/grid-item';
 import { ImageDTO } from '../../../types/image';
-import { WindowComponent } from '../window/window';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-project-view',
-  imports: [CommonModule, Grid, GridItem, WindowComponent],
+  imports: [CommonModule, GridItem],
   templateUrl: './project-view.html',
   styleUrl: './project-view.scss',
   encapsulation: ViewEncapsulation.None,
@@ -26,14 +24,14 @@ export class ProjectView implements OnInit, AfterViewInit {
   public tagsAppended: boolean = false;
   public isAnimating: boolean = false;
 
-  public loading$: Observable<boolean> | null = null;
+  private loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public loading$: Observable<boolean> = this.loading.asObservable();
 
   subscribers: Subscription = new Subscription();
 
   constructor(private activatedRoute: ActivatedRoute, private sanityService: SanityService) {
-    document.body.style.setProperty('--fg-color', 'white');
-    document.body.style.setProperty('--bg-color', 'black');
-    this.loading$ = this.sanityService.loading$;
+    // document.body.style.setProperty('--fg-color', 'white');
+    // document.body.style.setProperty('--bg-color', 'black');
   }
 
   ngAfterViewInit(): void {
@@ -46,9 +44,15 @@ export class ProjectView implements OnInit, AfterViewInit {
       this.load();
       })
     );
+    this.subscribers.add(this.loading$.subscribe((isLoading) => {
+      if (!isLoading && this.project) {
+        this.setColorScheme(this.project.bgColor, this.project.textColor, this.project.accentColor);
+      }
+    }));
   }
 
   private load(): void {
+    this.loading.next(true);
     this.isAnimating = false;
 
     const id = this.getProjectIdFromRoute();
@@ -57,6 +61,7 @@ export class ProjectView implements OnInit, AfterViewInit {
     if (this.projectTitle) {
       this.sanityService.getProjectByTitle(this.projectTitle).subscribe((project: ProjectDTO) => {
         if (!project) {
+          this.loading.next(false);
           this.notFound = true;
           return;
         }
@@ -71,8 +76,7 @@ export class ProjectView implements OnInit, AfterViewInit {
         if (project && project.images) {
           this.projectImages = project.images as ImageDTO[];
         }
-
-        this.setColorScheme(project.bgColor, project.textColor, project.accentColor);
+        this.loading.next(false);
       });
     }
   }
@@ -89,7 +93,7 @@ export class ProjectView implements OnInit, AfterViewInit {
     document.body.style.setProperty('--project-bg', bgColor ? bgColor : '#ffffff');
     document.body.style.setProperty('--project-text', textColor ? textColor : '#000000');
     document.body.style.setProperty('--project-accent', accentColor ? accentColor : '#000000');
-    document.body.style.setProperty('--bg-color', accentColor ? accentColor : '#000000');
+    document.body.style.setProperty('--bg-color', accentColor ? accentColor : '#000000');;
   }
 
   public renderSpan(span: any, block: Block): string {

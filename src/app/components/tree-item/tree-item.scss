@@ -23,7 +23,12 @@
 }
 
 .nav-item {
-    all: unset;
+    cursor: none;
+    background: none;
+    border: none;
+    outline: none;
+    text-decoration: none;
+    color: inherit;
     display: inline-block;
     box-sizing: border-box;
     line-height: 1.2; 
@@ -31,7 +36,6 @@
     font-family: 'Coconat Regular', monospace;
     font-size: 16px;
     padding: 0.2rem 0.2rem;
-    transition: color 0.1s ease, background-color 0.1s ease;
 }
 
 .nav-item:hover {

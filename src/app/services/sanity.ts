@@ -21,7 +21,7 @@ export class SanityService {
   public loading$ = this.loading.asObservable();
 
   public getPosts(): Observable<ImageDTO> {
-    this.loading.next(true);
+    setTimeout(() => this.loading.next(true));
     const query = groq`*[_type == "blogPost"]{title, slug, body}`;
     return new Observable<any>(observer => {
       this.client.fetch(query)
@@ -35,7 +35,7 @@ export class SanityService {
   }
 
   public getAllImages(): Observable<ImageDTO[]> {
-    this.loading.next(true);
+    setTimeout(() => this.loading.next(true));
     const query = groq`*[_type == "imagePost"]{
       _id,
       title,
@@ -56,7 +56,7 @@ export class SanityService {
   }
 
   public getImageByTitle(title: string): Observable<ImageDTO> {
-    this.loading.next(true);
+    setTimeout(() => this.loading.next(true));
     const query = groq`*[_type == "imagePost" && title == $title][0]{
       _id,
       title,
@@ -77,7 +77,7 @@ export class SanityService {
   }
 
   public getAllVideos(): Observable<VideoDTO[]> {
-    this.loading.next(true);
+    setTimeout(() => this.loading.next(true));
     const query = groq`*[_type == "videoPost"]{
       _id,
       title,
@@ -97,7 +97,7 @@ export class SanityService {
   }
 
   public getAllProjectTitles(): Observable<string[]> {
-    this.loading.next(true);
+    setTimeout(() => this.loading.next(true));
     const query = groq`*[_type == "project"]{
       title
     } | order(title asc)`;
@@ -114,7 +114,7 @@ export class SanityService {
   }
 
   public getProjectByTitle(title: string): Observable<ProjectDTO> {
-    this.loading.next(true);
+    setTimeout(() => this.loading.next(true));
     const query = groq`*[_type == "project" && title == $title][0]{
       _id,
       _createdAt,

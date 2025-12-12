@@ -1,15 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { TreeItem } from '../tree-item/tree-item';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { Subscriber, Subscription } from 'rxjs';
-import { SanityService } from '../../services/sanity';
+import { Subscription } from 'rxjs';
 import { NavItem, NavLinks } from '../nav-links/nav-links';
 
 @Component({
   selector: 'nav-bar',
-  imports: [CommonModule, TreeItem, NavLinks],
+  imports: [CommonModule, NavLinks],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss',
 })

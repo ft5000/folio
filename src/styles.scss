@@ -123,7 +123,7 @@ nav {
 
         i {
             vertical-align: bottom;
-            transition: transform 0.1s ease;
+            // transition: transform 0.1s ease;
         }
 
         i.expanded {
@@ -196,7 +196,7 @@ nav-bar {
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 100;
+    z-index: 2;
     mix-blend-mode: difference;
     user-select: none;
     opacity: 0;
@@ -221,7 +221,7 @@ nav-bar {
     pointer-events: none;
     opacity: 0;
     transition: opacity 1s ease;
-    z-index: 50;
+    z-index: 1;
 }
 
 .gradient.show {

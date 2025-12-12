@@ -67,7 +67,10 @@
 }
 
 .nav-button {
-  all: unset;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: none;
   color: $fg-color;
   width: fit-content;
   height: fit-content;
