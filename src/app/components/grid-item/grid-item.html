@@ -6,8 +6,8 @@
     <div class="item-overlay" [ngClass]="{'show': hovered}">
         <!-- <i class="fa fa-spinner"></i> -->
         <div class="item-text">
-            <p>{{ title }}</p>
-            <p>{{ publishedDate }}</p>
+            <p *ngIf="showTitle">{{ title }}</p>
+            <p *ngIf="showPublishDate">{{ publishedDate }}</p>
         </div>
     </div>
 </div>

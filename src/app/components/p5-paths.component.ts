@@ -72,20 +72,25 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
                     p.clear();
                     
                     
+                    const maxLines = 4;
+                    let nl = 0;
+
                     for (let x = 0; x < p.width; x += ts) {
                         for (let y = 0; y < p.height; y += ts) {
                             const d = p.dist(x, y, p.mouseX, p.mouseY);
                             const n = p.noise(x * 0.125, y * 0.125);
+                            
 
-                            if (d < ts * 5 && n < 0.25 && !this.isEdge(x, y)) {
+                            if (d < ts * 4.3 && n < 0.25 && !this.isEdge(x, y)) {
                                 p.strokeWeight(1);
                                 p.fill(255);
                                 p.noStroke();
-                                p.circle(x, y, 4);
+                                p.circle(x, y, 3);
                                 p.stroke(255);
                                 p.line(x, y, p.mouseX, p.mouseY);
                                 p.noStroke();
-                                p.text('x:' + x + ', y:' + y + ', d:' + d.toFixed(2), x, y);
+                                p.text('d:' + d.toFixed(2), x + 3, y - 3);
+                                nl++;
                             }
                         }
                     }

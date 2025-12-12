@@ -26,7 +26,7 @@
             </div>
             <div *ngIf="projectImages && projectImages.length > 0" class="image-container">
                 <ng-container *ngFor="let image of projectImages">
-                    <grid-item [image]="image" [showDefault]="true"></grid-item>
+                    <grid-item [image]="image" [showDefault]="true" [showPublishDate]="false"></grid-item>
                 </ng-container>
             </div>
         </div>

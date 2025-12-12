@@ -22,6 +22,8 @@ export class GridItem {
   @Input() image: ImageDTO | null = null;
   @Input() video: VideoDTO | null = null;
   @Input() showDefault: boolean = false;
+  @Input() showTitle: boolean = true;
+  @Input() showPublishDate: boolean = true;
   hovered: boolean = false;
 
   @ContentChildren('content', { descendants: true })
