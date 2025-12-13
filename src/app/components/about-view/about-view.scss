@@ -8,6 +8,8 @@
     flex-direction: column;
     background-color: transparent;
     transition: 1s background-color ease;
+    position: relative;
+    z-index: 1;
 
     section {
         flex: 1;
@@ -16,6 +18,17 @@
 
 .about-view.show-bg {
     background-color: color-mix(in srgb, var(--bg-color), transparent 0%);
+}
+
+.canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
 }
 
 .about-column {
@@ -128,7 +141,7 @@ pre {
     min-height: 100vh;
     // height: 100vh;
     transform: translate(-50%, -50%);
-    z-index: -1;
+    z-index: 0;
     animation: forwards fadeIn 1s ease;
     transition: filter 1s ease;
 }

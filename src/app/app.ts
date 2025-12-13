@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { P5PathsComponent } from './components/p5-paths.component';
@@ -16,11 +16,13 @@ const mobileLayoutBreakpoint = 768;
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
-export class App implements OnInit, AfterViewInit {
+export class App implements OnInit, AfterViewInit, OnDestroy {
   public isMobile: boolean = false;
   public canScrollDown: boolean = false;
   public useMobileLayout: boolean = false;
   public currentRoute: string = '';
+
+  private interval: any;
 
   subscribers: Subscription = new Subscription();
 
@@ -28,6 +30,11 @@ export class App implements OnInit, AfterViewInit {
 
   constructor(private router: Router, private sanityService: SanityService) {
     this.loading$ = this.sanityService.loading$;
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
+    this.subscribers.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -50,6 +57,17 @@ export class App implements OnInit, AfterViewInit {
     ).subscribe((event: NavigationEnd) => {
       setTimeout(() => this.updateCanScrollDown(), 500);
     }));
+
+    this.interval = setInterval(() => {
+        const chars = '#$*ft5000_online'
+        const title = document.title.split('')
+        const idx = Math.floor(Math.random() * title.length)
+        if (Math.random() < 0.1) {
+          const randomChar = chars[Math.floor(Math.random() * chars.length)]
+          title[idx] = randomChar
+          document.title = title.join('')
+        }
+    }, 60);
   }
 
   @HostListener('window:scroll', [])

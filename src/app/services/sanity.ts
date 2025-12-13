@@ -14,7 +14,7 @@ export class SanityService {
     projectId: 'nznn7r7s',
     dataset: 'production',
     apiVersion: '2025-01-01',
-    useCdn: false, // Disable CDN to avoid CORS issues in development
+    useCdn: true, // Use CDN for production deployment
   });
 
   private loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

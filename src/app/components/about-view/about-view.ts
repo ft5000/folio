@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, viewChild } from '@angular/core';
 
 @Component({
   selector: 'app-about-view',
@@ -13,6 +13,8 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private glContext: WebGL2RenderingContext | null = null;
   private startTime: number = 0;
 
+  @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
+
   constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
 
   ngOnInit() {
@@ -24,7 +26,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const el = this.renderer.createElement('canvas');
     this.renderer.setAttribute(el, 'id', 'about-bg');
-    this.renderer.appendChild(this.elementRef.nativeElement, el);
+    this.renderer.appendChild(this.canvasContainer.nativeElement, el);
 
     this.initWebGL();
 
@@ -105,15 +107,15 @@ if (aboutContent) {
     
     const canvas = this.renderer.createElement('canvas');
     this.renderer.setAttribute(canvas, 'id', 'about-bg');
-    this.renderer.appendChild(this.elementRef.nativeElement, canvas);
+    this.renderer.appendChild(this.canvasContainer.nativeElement, canvas);
     
     if (!canvas) return;
 
     const dpr = window.devicePixelRatio || 1;
     const aspectRatio = 2660 / 1440;
 
-    canvas.style.position = 'fixed';
-    canvas.style.zIndex = '-1';
+    // canvas.style.position = 'fixed';
+    // canvas.style.zIndex = '0';
   
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
@@ -128,9 +130,9 @@ if (aboutContent) {
     // Store the context
     this.glContext = gl;
     
-    // Load shader files
-    const vertResponse = await fetch('/shaders/about.vert');
-    const fragResponse = await fetch('/shaders/about.frag');
+    // Load shader files (using relative path to work with base href)
+    const vertResponse = await fetch('shaders/about.vert');
+    const fragResponse = await fetch('shaders/about.frag');
     const vertSource = await vertResponse.text();
     const fragSource = await fragResponse.text();
     
@@ -178,7 +180,7 @@ if (aboutContent) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     const image = new Image();
-    image.src = '/images/header_3.jpg';
+    image.src = 'images/header_3.jpg';
     image.onload = () => {
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);

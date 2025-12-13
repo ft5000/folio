@@ -136,14 +136,15 @@ main {
     flex: 1; 
 }
 
-body {
+html, body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: $bg-color;
+    background-color: black;
     transition: background-color 0.3s ease;
     cursor: none !important;
     font-family: 'ITC Avant Garde', sans-serif;
+    overscroll-behavior-y: none;
 }
 
 * {

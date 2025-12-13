@@ -1,4 +1,4 @@
-<cursor *ngIf="!isMobile"></cursor>
+<cursor *ngIf="!isMobile && !useMobileLayout"></cursor>
 <nav-bar></nav-bar>
 <span *ngIf="loading$ | async" class="loader"></span>
 <img class="arrow-down" [ngClass]="{'show': canScrollDown}" src="images/arrow_down_1.png"/>
