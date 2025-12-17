@@ -2,7 +2,10 @@
     <img *ngIf="image"
         [src]="image.imageUrl"
         [alt]="image.alt"/>
-    <video-container *ngIf="video" [data]="video"></video-container>
+    <video-container *ngIf="videoThumbnail; else videoBlock" [thumbnailDto]="videoThumbnail"></video-container>
+    <ng-template #videoBlock>
+        <video-container *ngIf="video" [data]="video"></video-container>
+    </ng-template>
     <div class="item-overlay" [ngClass]="{'show': hovered}">
         <!-- <i class="fa fa-spinner"></i> -->
         <div class="item-text">

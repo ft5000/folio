@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
-import { VideoDTO } from '../../../types/video';
+import { VideoDTO, VideoThumbnailDTO } from '../../../types/video';
 import { CommonModule } from '@angular/common';
+import { SanityService } from '../../services/sanity';
 
 @Component({
   selector: 'video-container',
@@ -16,29 +17,102 @@ export class VideoContainer implements AfterViewInit, OnDestroy {
   private observer: IntersectionObserver | undefined;
 
   private _data: VideoDTO | null = null;
+  private _thumbnailDto: VideoThumbnailDTO | null = null;
 
-  private loaded: boolean = false;
+  public loading: boolean = false;
+  public hideThumbnail: boolean = false;
+
+  @Input()
+  set thumbnailDto(value: VideoThumbnailDTO | null) {
+    this._thumbnailDto = value;
+    console.log('thumbnailDto set:', value);
+  }
 
   @Input()
   set data(value: VideoDTO | null) {
     this._data = value;
-    this.videoEl = this.setVideoSource();
+    // this.loaded = false;
+  }
+
+  public get hasThumbnail(): boolean {
+    return this._thumbnailDto !== null;
+  }
+
+  get thumbnailUrl(): string {
+    return this._thumbnailDto ? this._thumbnailDto.thumbnailUrl : "";
   }
 
   get data(): VideoDTO | null {
     return this._data;
   }
 
+  constructor(private sanityService: SanityService) {
+    
+  }
+
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    if (this.videoEl) {
+      this.videoEl.src = '';
+      this.videoEl.load();
+      this.videoEl = undefined;
+    }
   }
 
   ngAfterViewInit(): void {
-    this.setVideoSource();
+    if (this._thumbnailDto && !this.data && this.videoOutlet?.nativeElement) {
+      // Check if image is already in the DOM (most common case)
+      const existingImg = this.videoOutlet.nativeElement.querySelector('img');
+      
+      if (existingImg) {
+        console.log('Image already in DOM');
+        if (existingImg.complete && existingImg.naturalHeight > 0) {
+          // Image already loaded
+          this.setupItemObserver(this.videoOutlet.nativeElement);
+          console.log('Thumbnail already loaded, setting up observer.');
+        } else {
+          // Wait for image to load
+          existingImg.addEventListener('load', () => {
+            if (this.videoOutlet?.nativeElement) {
+              this.setupItemObserver(this.videoOutlet.nativeElement);
+              console.log('Thumbnail loaded, setting up observer.');
+            }
+          }, { once: true });
+        }
+      } else {
+        // Fallback: Use MutationObserver if image not yet in DOM
+        console.log('Setting up MutationObserver');
+        const mutationObserver = new MutationObserver((mutations) => {
+          const img = this.videoOutlet?.nativeElement.querySelector('img');
+          
+          if (img) {
+            console.log('MutationObserver detected image');
+            mutationObserver.disconnect();
+            
+            if (img.complete && img.naturalHeight > 0) {
+              this.setupItemObserver(this.videoOutlet!.nativeElement);
+              console.log('Thumbnail already loaded, setting up observer.');
+            } else {
+              img.addEventListener('load', () => {
+                if (this.videoOutlet?.nativeElement) {
+                  this.setupItemObserver(this.videoOutlet.nativeElement);
+                  console.log('Thumbnail loaded, setting up observer.');
+                }
+              }, { once: true });
+            }
+          }
+        });
+
+        mutationObserver.observe(this.videoOutlet.nativeElement, {
+          childList: true,
+          subtree: true
+        });
+      }
+    }
   }
 
-  private setupItemObserver(videoEl: HTMLVideoElement): void {
-    if (!videoEl) return;
+  private setupItemObserver(outlet: HTMLElement): void {
+    if (!outlet) return;
 
     if (this.observer) {
       this.observer.disconnect();
@@ -48,28 +122,53 @@ export class VideoContainer implements AfterViewInit, OnDestroy {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (videoEl.paused) {
-              if (!this.loaded) {
-                videoEl.load();
-                videoEl.onloadeddata = () => {
-                  videoEl
+            if (!this.data) {
+              this.loading = true;
+              this.sanityService.getVideoById(this._thumbnailDto?._id).subscribe({
+                next: (videoData: VideoDTO) => {
+                  this.data = videoData;
+                  this.videoEl = this.setVideoSource();
+                },
+                complete: () => {
+  
+                }
+              });
+            }
+            if (this.videoEl && this.videoEl.paused) {
+              if (this.loading) {
+                this.videoEl.load();
+                
+                const onLoadedData = () => {
+                  this.videoEl!
                     .play()
-                    .catch((err) =>
+                    .catch((err: any) =>
                       console.warn('Autoplay blocked or interrupted:', err)
                     );
-                  this.loaded = true;
+                  this.loading = false;
+                  this.videoEl!.removeEventListener('loadeddata', onLoadedData);
+                  this.videoEl!.removeEventListener('error', onError);
                 };
+
+                const onError = () => {
+                  console.warn('Video failed to load:', this.data?.videoUrl);
+                  this.loading = false;
+                  this.videoEl!.removeEventListener('loadeddata', onLoadedData);
+                  this.videoEl!.removeEventListener('error', onError);
+                };
+
+                this.videoEl.addEventListener('loadeddata', onLoadedData);
+                this.videoEl.addEventListener('error', onError);
               } else {
-                videoEl
+                this.videoEl
                   .play()
-                  .catch((err) =>
+                  .catch((err: any) =>
                     console.warn('Autoplay blocked or interrupted:', err)
                   );
               }
             }
           } else {
-            if (!videoEl.paused) {
-              videoEl.pause();
+            if (this.videoEl && !this.videoEl.paused) {
+              this.videoEl.pause();
             }
           }
         });
@@ -77,24 +176,46 @@ export class VideoContainer implements AfterViewInit, OnDestroy {
       { threshold: 0.5 }
     );
 
-    this.observer.observe(videoEl);
+    this.observer.observe(outlet);
   }
 
   private setVideoSource(): HTMLVideoElement | undefined {
     if (this.data && this.videoOutlet) {
-      this.videoOutlet.nativeElement.innerHTML = '';
+      if (this.videoEl) {
+        this.observer?.disconnect();
+        this.videoEl.pause();
+        this.videoEl.src = '';
+        this.videoEl.load();
+      }
 
       const videoElement = document.createElement('video');
       videoElement.src = this.data.videoUrl;
       videoElement.autoplay = false;
       videoElement.muted = true;
-      videoElement.preload = 'none';
+      videoElement.preload = 'auto';
       videoElement.playsInline = true;
       videoElement.loop = true;
+      
+      videoElement.style.transform = 'translateZ(0)';
+      videoElement.style.willChange = 'transform';
 
-      this.videoOutlet.nativeElement.appendChild(videoElement);
+      // Wait for video to be fully loaded before appending
+      videoElement.addEventListener('loadeddata', () => {
+        if (this.videoOutlet) {
+          this.hideThumbnail = true;
+          this.videoOutlet.nativeElement.appendChild(videoElement);
+          this.loading = false;
+          
+          // Start playing
+          videoElement.play().catch((err: any) =>
+            console.warn('Autoplay blocked or interrupted:', err)
+          );
+        }
+      }, { once: true });
 
-      this.setupItemObserver(videoElement);
+      // Start loading
+      videoElement.load();
+
       return videoElement;
     }
     return undefined;

@@ -5,3 +5,10 @@ export interface VideoDTO {
     publishedAt: string;
     videoUrl: string;
 }
+
+export interface VideoThumbnailDTO {
+    _id: string;
+    title: string;
+    thumbnailUrl: string;
+    publishedAt: string;
+}

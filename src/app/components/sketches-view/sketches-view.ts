@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { VideoDTO } from '../../../types/video';
+import { VideoDTO, VideoThumbnailDTO } from '../../../types/video';
 import { SanityService } from '../../services/sanity';
 import { CommonModule } from '@angular/common';
 import { GridItem } from '../grid-item/grid-item';
@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 })
 export class SketchesView extends GridView implements OnInit {
   items: VideoDTO[] | null = null;
+  thumbnails: VideoThumbnailDTO[] | null = null;
 
   public loading$: Observable<boolean> | null = null;
 
@@ -24,12 +25,12 @@ export class SketchesView extends GridView implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sanityService.getAllVideos().subscribe((data: VideoDTO[]) => {
-      this.items = data;
+    this.sanityService.getVideoThumnails().subscribe((data: VideoThumbnailDTO[]) => {
+      this.thumbnails = data;
       this.setupItemObserver();
     });
     document.body.style.setProperty('--fg-color', 'white');
-    document.body.style.setProperty('--bg-color', 'blue');
+    document.body.style.setProperty('--bg-color', 'green');
   }
 
 }

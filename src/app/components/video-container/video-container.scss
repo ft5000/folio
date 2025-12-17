@@ -1,0 +1,63 @@
+.blog-video {
+    width: 100%;
+    height: auto;
+    position: relative;
+    contain: layout style paint;
+
+    img {
+        width: 100%;
+        height: auto;
+        display: block;
+        position: absolute;
+        transition: opacity 0.3s ease;
+    }
+
+    img.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateZ(0);
+        will-change: auto;
+        backface-visibility: hidden;
+    }
+
+    .loader {
+        width: 48px;
+        height: 48px;
+        border: 6px solid white;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+        position: absolute;
+        z-index: 10000;
+        top: 50%;
+        left: 50%;
+        margin: -24px 0 0 -24px;
+        opacity: 0;
+        transform: translateZ(0);
+    }
+
+    .loader.show {
+        opacity: 1;
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: translateZ(0) rotate(0deg);
+        }
+        100% {
+            transform: translateZ(0) rotate(360deg);
+        }
+    }
+}
+

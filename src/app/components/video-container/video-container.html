@@ -1,1 +1,4 @@
-<div #videoOutlet class="blog-video"></div>
+<div #videoOutlet class="blog-video">
+    <div *ngIf="loading" class="loader"></div>
+    <img *ngIf="hasThumbnail" [src]="thumbnailUrl" [ngClass]="{'hide': hideThumbnail}"/>
+</div>

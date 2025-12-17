@@ -3,7 +3,7 @@ import { createClient } from '@sanity/client';
 import groq from 'groq';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ImageDTO } from '../../types/image';
-import { VideoDTO } from '../../types/video';
+import { VideoDTO, VideoThumbnailDTO } from '../../types/video';
 import { ProjectDTO } from '../../types/project';
 
 @Injectable({
@@ -86,6 +86,43 @@ export class SanityService {
       publishedAt
     } | order(publishedAt desc)`;
     return new Observable<VideoDTO[]>(observer => {
+      this.client.fetch(query)
+      .then(data => {
+        observer.next(data);
+        this.loading.next(false);
+        observer.complete();
+      })
+      .catch(err => { observer.error(err); this.loading.next(false); });
+    });
+  }
+
+  public getVideoById(id: string | undefined): Observable<VideoDTO> {
+    const query = groq`*[_type == "videoPost" && _id == $id][0]{
+      _id,
+      title,
+      "videoUrl": video.asset->url,
+      description,
+      publishedAt
+    }`;
+    return new Observable<VideoDTO>(observer => {
+      this.client.fetch(query, { id })
+        .then(data => {
+          observer.next(data);
+          observer.complete();
+        })
+        .catch(err => { observer.error(err); });
+    });
+  }
+
+  public getVideoThumnails(): Observable<VideoThumbnailDTO[]> {
+    setTimeout(() => this.loading.next(true));
+    const query = groq`*[_type == "videoPost"]{
+      _id,
+      title,
+      "thumbnailUrl": thumbnail.asset->url,
+      publishedAt
+    } | order(publishedAt desc)`;
+    return new Observable<VideoThumbnailDTO[]>(observer => {
       this.client.fetch(query)
       .then(data => {
         observer.next(data);
