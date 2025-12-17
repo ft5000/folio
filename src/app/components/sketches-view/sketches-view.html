@@ -3,11 +3,8 @@
         <div class="grid-container">
             <grid [maxCols]="2">
                 <ng-template *ngFor="let thumb of thumbnails">
-                    <grid-item [videoThumbnail]="thumb" [showPublishDate]="false" [showDefault]="true"></grid-item>
+                    <grid-item [videoThumbnail]="thumb" [showPublishDate]="false" [showDefault]="false"></grid-item>
                 </ng-template>
-                <!-- <ng-template *ngFor="let item of items">
-                    <grid-item [video]="item" [showPublishDate]="false"></grid-item>
-                </ng-template> -->
             </grid>
         </div>
     </ng-container>

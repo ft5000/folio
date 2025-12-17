@@ -24,7 +24,20 @@ export class VideoContainer implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (this.wrapper?.nativeElement) {
-      this.setupObserver();
+      if (this.thumbnailDto) {
+        const img = this.wrapper.nativeElement.querySelector('img');
+        if (img) {
+          if (img.complete && img.naturalHeight > 0) {
+            this.setupObserver();
+          } else {
+            img.addEventListener('load', () => {
+              this.setupObserver();
+            }, { once: true });
+          }
+        }
+      } else {
+        this.setupObserver();
+      }
     }
   }
 

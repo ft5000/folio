@@ -30,7 +30,7 @@ export class SketchesView extends GridView implements OnInit {
       this.setupItemObserver();
     });
     document.body.style.setProperty('--fg-color', 'white');
-    document.body.style.setProperty('--bg-color', 'green');
+    document.body.style.setProperty('--bg-color', 'blue');
   }
 
 }
