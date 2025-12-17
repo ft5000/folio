@@ -1,4 +1,17 @@
-<div #videoOutlet class="blog-video">
-    <div *ngIf="loading" class="loader"></div>
-    <img *ngIf="hasThumbnail" [src]="thumbnailUrl" [ngClass]="{'hide': hideThumbnail}"/>
+<div class="video-wrapper" #wrapper>
+  <img
+    *ngIf="hasThumbnail"
+    [src]="thumbnailUrl"
+    [class.hide]="hideThumbnail"
+    class="thumbnail"
+  />
+  <span *ngIf="loading" class="loader"></span>
+  <video
+    #videoElement
+    *ngIf="data"
+    [muted]="true"
+    [loop]="true"
+    playsinline
+    class="video"
+  ></video>
 </div>

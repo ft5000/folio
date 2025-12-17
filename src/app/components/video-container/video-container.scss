@@ -1,14 +1,13 @@
-.blog-video {
+.video-wrapper {
     width: 100%;
     height: auto;
     position: relative;
-    contain: layout style paint;
 
     img {
         width: 100%;
         height: auto;
         display: block;
-        position: absolute;
+        position: relative;
         transition: opacity 0.3s ease;
     }
 
@@ -24,9 +23,6 @@
         position: absolute;
         top: 0;
         left: 0;
-        transform: translateZ(0);
-        will-change: auto;
-        backface-visibility: hidden;
     }
 
     .loader {
@@ -43,12 +39,6 @@
         top: 50%;
         left: 50%;
         margin: -24px 0 0 -24px;
-        opacity: 0;
-        transform: translateZ(0);
-    }
-
-    .loader.show {
-        opacity: 1;
     }
 
     @keyframes rotation {
