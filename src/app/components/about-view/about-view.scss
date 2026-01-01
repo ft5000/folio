@@ -17,7 +17,7 @@
 }
 
 .about-view.show-bg {
-    background-color: color-mix(in srgb, var(--bg-color), transparent 0%);
+    background-color: color-mix(in srgb, blue, transparent 0%);
 }
 
 .canvas-container {
@@ -132,22 +132,12 @@ pre {
 
 #about-bg {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    aspect-ratio: 2660 / 1440;
-    // width: min(1920px, 100vw);
-    min-width: 1920px;
-    width: 100%;
-    min-height: 100vh;
-    // height: 100vh;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    // transform: translate(-50%, -50%);
     z-index: 0;
     animation: forwards fadeIn 1s ease;
     transition: filter 1s ease;
-}
-
-#about-bg.blur {
-    filter: blur(16px);
 }
 
 @keyframes fadeIn {
@@ -161,10 +151,10 @@ pre {
 
 @keyframes bgIntro {
     from {
-        background-color: rgba(0, 0, 0, 0.0);
+        background-color: rgba(0, 0, 255, 0.0);
     }
     to {
-        background-color: rgba(0, 0, 0, 0.75);
+        background-color: rgba(0, 0, 255, 0.75);
     }
 }
 
@@ -177,10 +167,17 @@ pre {
     }
 }
 
+@media screen and (min-width: 768px) {
+    #about-bg {
+            min-width: 1920px;
+            width: 100%;
+            min-height: 100vh;
+    }
+}
+
 @media screen and (max-width: 768px) {
     #about-bg {
-        left: -30%;
-        transform: translate(-35%, -50%);
+        min-width: unset;
     }
 
     .about-column {

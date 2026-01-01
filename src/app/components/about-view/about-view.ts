@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, viewChild } from '@angular/core';
+import * as THREE from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
 @Component({
   selector: 'app-about-view',
@@ -11,7 +13,19 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private observer: IntersectionObserver | undefined;
   private animationFrameId: number | null = null;
   private glContext: WebGL2RenderingContext | null = null;
-  private startTime: number = 0;
+  private scene!: THREE.Scene;
+  private camera!: THREE.OrthographicCamera;
+  private threeRenderer!: THREE.WebGLRenderer;
+  private mesh: THREE.Object3D | null = null;
+  private mouseX: number = 0;
+  private mouseY: number = 0;
+  private rotX: number = 0;
+  private rotY: number = 0;
+  private renderTarget!: THREE.WebGLRenderTarget;
+  private postScene!: THREE.Scene;
+  private postCamera!: THREE.OrthographicCamera;
+  private shaderMaterial!: THREE.ShaderMaterial;
+  private canvasElement!: HTMLCanvasElement;
 
   @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
 
@@ -20,228 +34,288 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     document.body.style.setProperty('--fg-color', 'white');
     document.body.style.setProperty('--bg-color', 'black');
-    this.startTime = 0;
+    
+    // Track mouse movement
+    window.addEventListener('mousemove', this.onMouseMove.bind(this));
   }
 
   ngAfterViewInit() {
-    const el = this.renderer.createElement('canvas');
-    this.renderer.setAttribute(el, 'id', 'about-bg');
-    this.renderer.appendChild(this.canvasContainer.nativeElement, el);
-
-    this.initWebGL();
+    const canvasEl = this.renderer.createElement('canvas');
+    canvasEl.style.width = window.innerWidth + 'px';
+    canvasEl.style.height = window.innerHeight + 'px';
+    this.renderer.setAttribute(canvasEl, 'id', 'about-bg');
+    this.renderer.appendChild(this.canvasContainer.nativeElement, canvasEl);
+    this.canvasElement = canvasEl;
+    
+    // Wait for next frame to ensure canvas is in DOM with proper size
+    requestAnimationFrame(() => {
+      this.initThreeJS(canvasEl);
+    });
+    // this.renderer.appendChild(this.canvasContainer.nativeElement, el);
 
     this.observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach(entry => {
-      if (entry.target.id === 'about-content') {
-        const aboutView = document.querySelector('.about-view');
-        const aboutBg = document.getElementById('about-bg');
+      (entries) => {
+      entries.forEach(entry => {
+        if (entry.target.id === 'about-content') {
+          const aboutView = document.querySelector('.about-view');
 
-        if (entry.isIntersecting) {
-          aboutView?.classList.add('show-bg');
-          aboutBg?.classList.add('blur');
-        } else {
-          aboutView?.classList.remove('show-bg');
-          aboutBg?.classList.remove('blur');
+          if (entry.isIntersecting) {
+            aboutView?.classList.add('show-bg');
+          } else {
+            aboutView?.classList.remove('show-bg');
+          }
         }
-      }
     });
   },
-  { threshold: 0.5 }
-);
+  { threshold: 0.5 });
 
-// Observe ONLY the about-content element
-const aboutContent = document.getElementById('about-content');
-if (aboutContent) {
-  this.observer.observe(aboutContent);
-}
+    // Observe ONLY the about-content element
+    const aboutContent = document.getElementById('about-content');
+    if (aboutContent) {
+      this.observer.observe(aboutContent);
+    }
   }
 
   ngOnDestroy() {
     this.observer?.disconnect();
+    window.removeEventListener('mousemove', this.onMouseMove.bind(this));
     
-    // Cancel animation frame
+    // Clean up Three.js resources
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
+    }
+    if (this.threeRenderer) {
+      this.threeRenderer.dispose();
+    }
+    if (this.mesh) {
+      // Traverse the object and dispose of geometries and materials
+      this.mesh.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry.dispose();
+          if (Array.isArray(child.material)) {
+            child.material.forEach(m => m.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
+    }
+  }
+
+  private initThreeJS(canvas: HTMLCanvasElement) {
+    const width = canvas.clientWidth || window.innerWidth;
+    const height = canvas.clientHeight || window.innerHeight;
+    
+    this.scene = new THREE.Scene();
+    
+    const aspect = width / height;
+    const frustumSize = 150;
+    this.camera = new THREE.OrthographicCamera(
+      frustumSize * aspect / -2,
+      frustumSize * aspect / 2,
+      frustumSize / 2,
+      frustumSize / -2,
+      0.1,
+      1000
+    );
+    this.camera.position.set(0, 0, 100);
+    this.camera.lookAt(0, 0, 0);
+    this.camera.zoom = 1.5;
+    this.camera.updateProjectionMatrix();
+    
+    // Create renderer
+    this.threeRenderer = new THREE.WebGLRenderer({ 
+      canvas: canvas,
+      antialias: true,
+      alpha: true 
+    });
+    this.threeRenderer.setSize(width, height);
+    this.threeRenderer.setPixelRatio(window.devicePixelRatio);
+    
+    // Create render target for post-processing
+    this.renderTarget = new THREE.WebGLRenderTarget(width, height);
+    
+    // Setup post-processing scene
+    this.postScene = new THREE.Scene();
+    this.postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    
+    // Load shaders and character set
+    Promise.all([
+      fetch('/ascii/shader.vert').then(r => r.text()),
+      fetch('/ascii/shader.frag').then(r => r.text()),
+      new THREE.TextureLoader().loadAsync('/ascii/ascii_charset_20x12_8_blue.png')
+    ]).then(([vertShader, fragShader, charSetTexture]) => {
+      charSetTexture.minFilter = THREE.NearestFilter;
+      charSetTexture.magFilter = THREE.NearestFilter;
+      
+      // Create shader material
+      this.shaderMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          tex: { value: this.renderTarget.texture },
+          charSet: { value: charSetTexture },
+          charSetLength: { value: 8 },
+          pixelWidth: { value: 12 },
+          pixelHeight: { value: 20 },
+          resolution: { value: new THREE.Vector2(width, height) }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            vUv.y = 1.0 - vUv.y;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: fragShader.replace('uv.y = 1.0 - uv.y;', '')
+      });
+      
+      // Create fullscreen quad
+      const quad = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        this.shaderMaterial
+      );
+      this.postScene.add(quad);
+    });
+    
+    // Start rendering loop immediately
+    this.animate();
+    
+    // Add dramatic lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
+    this.scene.add(ambientLight);
+    
+    // Key light - very strong from top-front-right
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.5);
+    keyLight.position.set(100, 200, 200);
+    this.scene.add(keyLight);
+    
+    // Fill light - minimal from left
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    fillLight.position.set(-100, 10, 50);
+    this.scene.add(fillLight);
+    
+    // Rim light - strong from behind for edge definition
+    const rimLight1 = new THREE.DirectionalLight(0xffffff, 5.0);
+    rimLight1.position.set(-100, 50, -150);
+    this.scene.add(rimLight1);
+
+    const rimLight2 = new THREE.DirectionalLight(0xffffff, 5.0);
+    rimLight2.position.set(100, 50, -150);
+    this.scene.add(rimLight2);
+    
+    // Load skull model
+    const loader = new OBJLoader();
+    loader.load(
+      '/ascii/skull/source/skull.obj',
+      (object) => {
+        let meshCount = 0;
+        object.traverse((child) => {
+          if (child instanceof THREE.Mesh) {
+            meshCount++;
+            child.material = new THREE.MeshStandardMaterial({ 
+              color: 0xffffff,
+              metalness: 0.0,
+              roughness: 1.0,
+              side: THREE.DoubleSide
+            });
+          }
+        });
+        
+        const box = new THREE.Box3().setFromObject(object);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 150 / maxDim;
+        
+        // First center the object at origin before scaling
+        object.position.sub(center);
+        object.scale.setScalar(scale);
+        
+        // Move down slightly
+        object.position.y -= 10;
+        
+        this.mesh = object;
+        this.scene.add(object);
+
+        addEventListener('resize', () => {
+          const newWidth = this.canvasElement.clientWidth || window.innerWidth;
+          const newHeight = this.canvasElement.clientHeight || window.innerHeight;
+          this.canvasElement.style.width = newWidth + 'px';
+          this.canvasElement.style.height = newHeight + 'px';
+          this.threeRenderer.setSize(newWidth, newHeight);
+          this.renderTarget.setSize(newWidth, newHeight);
+          const aspect = newWidth / newHeight;
+          const frustumSize = 150;
+          this.camera.left = frustumSize * aspect / -2;
+          this.camera.right = frustumSize * aspect / 2;
+          this.camera.top = frustumSize / 2;
+          this.camera.bottom = frustumSize / -2;
+          this.camera.updateProjectionMatrix();
+                
+                // if (this.shaderMaterial) {
+                // this.shaderMaterial.uniforms['resolution'].value.set(newWidth, newHeight);
+                // }
+        });
+      },
+      (xhr) => {
+        // Progress callback - suppress console logging
+        const percent = xhr.lengthComputable ? (xhr.loaded / xhr.total * 100).toFixed(1) : 'unknown';
+        // Optionally show loading progress in UI instead of console
+      },
+      (error) => {
+        console.error('Error loading skull:', error);
+      }
+    );
+  }
+
+  private onMouseMove(event: MouseEvent): void {
+    this.mouseX = event.clientX;
+    this.mouseY = event.clientY;
+  }
+
+  private animate(): void {
+    this.animationFrameId = requestAnimationFrame(() => this.animate());
+    
+    if (this.mesh) {
+      // Map mouse position to rotation angles
+      const targetRotX = this.map(this.mouseY, 0, window.innerHeight, -Math.PI * 0.2, Math.PI * 0.2);
+      const targetRotY = this.map(this.mouseX, 0, window.innerWidth, -Math.PI * 0.3, Math.PI * 0.3);
+      
+      // Smooth interpolation
+      this.rotX = THREE.MathUtils.lerp(this.rotX, targetRotX, 0.1);
+      this.rotY = THREE.MathUtils.lerp(this.rotY, targetRotY, 0.1);
+      
+      // Apply rotations
+      this.mesh.rotation.x = this.rotX;
+      this.mesh.rotation.y = this.rotY;
     }
     
-    // Clean up WebGL context
-    if (this.glContext) {
-      const loseContext = this.glContext.getExtension('WEBGL_lose_context');
-      if (loseContext) {
-        loseContext.loseContext();
-      }
-      this.glContext = null;
+    // Toggle shader: set to false to disable post-processing
+    const useShader = true;
+    
+    if (useShader && this.renderTarget && this.shaderMaterial) {
+      // Render scene to render target
+      this.threeRenderer.setRenderTarget(this.renderTarget);
+      this.threeRenderer.render(this.scene, this.camera);
+      
+      // Render post-processing pass
+      this.threeRenderer.setRenderTarget(null);
+      this.threeRenderer.render(this.postScene, this.postCamera);
+    } else {
+      // Direct rendering without shader
+      this.threeRenderer.render(this.scene, this.camera);
     }
+  }
+
+  private map(value: number, start1: number, stop1: number, start2: number, stop2: number): number {
+    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
   }
 
   public getSpacerContent(): string {
     return ' ';
   }
 
-  private async initWebGL() {
-    // Cancel any existing animation frame
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-    
-    // Reset start time
-    this.startTime = 0;
-    
-    // Clean up existing WebGL context
-    if (this.glContext) {
-      const loseContext = this.glContext.getExtension('WEBGL_lose_context');
-      if (loseContext) {
-        loseContext.loseContext();
-      }
-      this.glContext = null;
-    }
-    
-    // Remove existing canvas and create a new one
-    const existingCanvas = document.getElementById('about-bg');
-    if (existingCanvas) {
-      existingCanvas.remove();
-    }
-    
-    const canvas = this.renderer.createElement('canvas');
-    this.renderer.setAttribute(canvas, 'id', 'about-bg');
-    this.renderer.appendChild(this.canvasContainer.nativeElement, canvas);
-    
-    if (!canvas) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const aspectRatio = 2660 / 1440;
-
-    // canvas.style.position = 'fixed';
-    // canvas.style.zIndex = '0';
-  
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-
-    const gl = canvas.getContext('webgl2');
-    
-    if (!gl) {
-      console.error('WebGL 2 not supported');
-      return;
-    }
-    
-    // Store the context
-    this.glContext = gl;
-    
-    // Load shader files (using relative path to work with base href)
-    const vertResponse = await fetch('shaders/about.vert');
-    const fragResponse = await fetch('shaders/about.frag');
-    const vertSource = await vertResponse.text();
-    const fragSource = await fragResponse.text();
-    
-    // Create and compile shaders
-    const vertShader = gl.createShader(gl.VERTEX_SHADER);
-    if (!vertShader) return;
-    gl.shaderSource(vertShader, vertSource);
-    gl.compileShader(vertShader);
-    
-    if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
-      return;
-    }
-    
-    const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    if (!fragShader) return;
-    gl.shaderSource(fragShader, fragSource);
-    gl.compileShader(fragShader);
-    
-    if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
-      return;
-    }
-    
-    // Create program
-    const program = gl.createProgram();
-    if (!program) return;
-    gl.attachShader(program, vertShader);
-    gl.attachShader(program, fragShader);
-    gl.linkProgram(program);
-    
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      return;
-    }
-
-    gl.useProgram(program);
-    
-    const vertices = new Float32Array([
-      -1, -1, 0,  0, 0,  // bottom-left
-       1, -1, 0,  1, 0,  // bottom-right
-      -1,  1, 0,  0, 1,  // top-left
-       1,  1, 0,  1, 1   // top-right
-    ]);
-
-    const uTex = gl.getUniformLocation(program, 'u_tex');
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    const image = new Image();
-    image.src = 'images/header_3.jpg';
-    image.onload = () => {
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-      gl.generateMipmap(gl.TEXTURE_2D);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-      gl.useProgram(program);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.uniform1i(uTex, 0);
-    };
-    
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    
-    const stride = 5 * Float32Array.BYTES_PER_ELEMENT; // 5 floats per vertex (x,y,z,u,v)
-    
-    const aPosition = gl.getAttribLocation(program, 'aPosition');
-    gl.enableVertexAttribArray(aPosition);
-    gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, stride, 0);
-    
-    const aTexCoord = gl.getAttribLocation(program, 'aTexCoord');
-    gl.enableVertexAttribArray(aTexCoord);
-    gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, stride, 3 * Float32Array.BYTES_PER_ELEMENT);
-    
-    // Get uniform locations
-    const uResolution = gl.getUniformLocation(program, 'u_resolution');
-    const uTime = gl.getUniformLocation(program, 'u_time');
-    const uModelViewMatrix = gl.getUniformLocation(program, 'uModelViewMatrix');
-    const uProjectionMatrix = gl.getUniformLocation(program, 'uProjectionMatrix');
-    
-    // Set identity matrices
-    const identityMatrix = new Float32Array([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ]);
-    gl.uniformMatrix4fv(uModelViewMatrix, false, identityMatrix);
-    gl.uniformMatrix4fv(uProjectionMatrix, false, identityMatrix);
-    
-    // Animation loop
-    const render = (time: number) => {
-      // Set start time on first frame
-      if (this.startTime === 0) {
-        this.startTime = time;
-      }
-      
-      const elapsedTime = (time - this.startTime) * 0.001;
-      
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform2f(uResolution, canvas.width, canvas.height);
-      gl.uniform1f(uTime, elapsedTime);
-      
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      this.animationFrameId = requestAnimationFrame(render);
-    };
-    
-    this.animationFrameId = requestAnimationFrame(render);
+  public get year(): number {
+    return new Date().getFullYear();
   }
-
 }
