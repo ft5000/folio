@@ -26,6 +26,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private postCamera!: THREE.OrthographicCamera;
   private shaderMaterial!: THREE.ShaderMaterial;
   private canvasElement!: HTMLCanvasElement;
+  private frameCount: number = 0;
 
   @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
 
@@ -109,7 +110,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.scene = new THREE.Scene();
     
     const aspect = width / height;
-    const frustumSize = 150;
+    const frustumSize = aspect < 1 ? 150 / aspect : 150;
     this.camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
       frustumSize * aspect / 2,
@@ -120,7 +121,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     );
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(0, 0, 0);
-    this.camera.zoom = 1.5;
+    this.camera.zoom = 2.0;
     this.camera.updateProjectionMatrix();
     
     // Create renderer
@@ -156,7 +157,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
           charSetLength: { value: 8 },
           pixelWidth: { value: 12 },
           pixelHeight: { value: 20 },
-          resolution: { value: new THREE.Vector2(width, height) }
+          resolution: { value: new THREE.Vector2(width * window.devicePixelRatio, height * window.devicePixelRatio) }
         },
         vertexShader: `
           varying vec2 vUv;
@@ -225,37 +226,20 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
-        const scale = 150 / maxDim;
+        const scaleModifier = window.innerHeight < 768 ? 1.2 : 1.0;
+        const scale = (100 / maxDim) * scaleModifier;
         
         // First center the object at origin before scaling
         object.position.sub(center);
         object.scale.setScalar(scale);
         
         // Move down slightly
-        object.position.y -= 10;
+        object.position.y -= 20;
         
         this.mesh = object;
         this.scene.add(object);
 
-        addEventListener('resize', () => {
-          const newWidth = this.canvasElement.clientWidth || window.innerWidth;
-          const newHeight = this.canvasElement.clientHeight || window.innerHeight;
-          this.canvasElement.style.width = newWidth + 'px';
-          this.canvasElement.style.height = newHeight + 'px';
-          this.threeRenderer.setSize(newWidth, newHeight);
-          this.renderTarget.setSize(newWidth, newHeight);
-          const aspect = newWidth / newHeight;
-          const frustumSize = 150;
-          this.camera.left = frustumSize * aspect / -2;
-          this.camera.right = frustumSize * aspect / 2;
-          this.camera.top = frustumSize / 2;
-          this.camera.bottom = frustumSize / -2;
-          this.camera.updateProjectionMatrix();
-                
-                // if (this.shaderMaterial) {
-                // this.shaderMaterial.uniforms['resolution'].value.set(newWidth, newHeight);
-                // }
-        });
+        addEventListener('resize', this.onResize.bind(this));
       },
       (xhr) => {
         // Progress callback - suppress console logging
@@ -268,6 +252,38 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  private onResize(): void {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+    console.log(`Resizing to ${newWidth}x${newHeight}`);
+    this.canvasElement.style.width = newWidth + 'px';
+    this.canvasElement.style.height = newHeight + 'px';
+    this.threeRenderer.setSize(newWidth, newHeight);
+    this.renderTarget.setSize(newWidth, newHeight);
+    
+    const aspect = newWidth / newHeight;
+    const frustumSize = aspect < 1 ? 150 / aspect : 150;
+    this.camera.left = frustumSize * aspect / -2;
+    this.camera.right = frustumSize * aspect / 2;
+    this.camera.top = frustumSize / 2;
+    this.camera.bottom = frustumSize / -2;
+    this.camera.zoom = 2.0;
+    this.camera.updateProjectionMatrix();
+    
+    // Reposition mesh based on orientation
+    // if (this.mesh) {
+    //   const isMobile = newHeight > newWidth;
+    //   this.mesh.position.y = isMobile ? 0 : -10;
+    // }
+          
+    if (this.shaderMaterial) {
+      this.shaderMaterial.uniforms['resolution'].value.set(
+        newWidth * window.devicePixelRatio, 
+        newHeight * window.devicePixelRatio
+      );
+    }
+  }
+
   private onMouseMove(event: MouseEvent): void {
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
@@ -277,34 +293,28 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.animationFrameId = requestAnimationFrame(() => this.animate());
     
     if (this.mesh) {
-      // Map mouse position to rotation angles
-      const targetRotX = this.map(this.mouseY, 0, window.innerHeight, -Math.PI * 0.2, Math.PI * 0.2);
-      const targetRotY = this.map(this.mouseX, 0, window.innerWidth, -Math.PI * 0.3, Math.PI * 0.3);
-      
-      // Smooth interpolation
+      this.mesh.position.y = Math.sin(this.frameCount * 0.01) * 2 + 10;
+
+      const targetRotX = this.map(this.mouseY, 0, window.innerHeight, -Math.PI * 0.1, Math.PI * 0.1);
+      const targetRotY = this.map(this.mouseX, 0, window.innerWidth, -Math.PI * 0.2, Math.PI * 0.2);
       this.rotX = THREE.MathUtils.lerp(this.rotX, targetRotX, 0.1);
       this.rotY = THREE.MathUtils.lerp(this.rotY, targetRotY, 0.1);
-      
-      // Apply rotations
       this.mesh.rotation.x = this.rotX;
       this.mesh.rotation.y = this.rotY;
     }
     
-    // Toggle shader: set to false to disable post-processing
     const useShader = true;
     
     if (useShader && this.renderTarget && this.shaderMaterial) {
-      // Render scene to render target
       this.threeRenderer.setRenderTarget(this.renderTarget);
       this.threeRenderer.render(this.scene, this.camera);
-      
-      // Render post-processing pass
       this.threeRenderer.setRenderTarget(null);
       this.threeRenderer.render(this.postScene, this.postCamera);
     } else {
-      // Direct rendering without shader
       this.threeRenderer.render(this.scene, this.camera);
     }
+
+    this.frameCount++;
   }
 
   private map(value: number, start1: number, stop1: number, start2: number, stop2: number): number {

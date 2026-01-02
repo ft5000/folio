@@ -17,7 +17,7 @@
 }
 
 .about-view.show-bg {
-    background-color: color-mix(in srgb, blue, transparent 0%);
+    background-color: color-mix(in srgb, lightgray, transparent 0%);
 }
 
 .canvas-container {
@@ -168,18 +168,14 @@ pre {
 }
 
 @media screen and (min-width: 768px) {
-    #about-bg {
-            min-width: 1920px;
-            width: 100%;
-            min-height: 100vh;
-    }
+    // #about-bg {
+    //         min-width: 1920px;
+    //         width: 100%;
+    //         min-height: 100vh;
+    // }
 }
 
 @media screen and (max-width: 768px) {
-    #about-bg {
-        min-width: unset;
-    }
-
     .about-column {
         width: 95vw;
     }
