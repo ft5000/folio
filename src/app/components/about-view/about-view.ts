@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { AppService } from '../../services/app';
 
 @Component({
   selector: 'app-about-view',
@@ -10,6 +12,8 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
   styleUrl: './about-view.scss',
 })
 export class AboutView implements OnInit, OnDestroy, AfterViewInit {
+  private isMobile: boolean = false;
+  private useMobileLayout: boolean = false;
   private observer: IntersectionObserver | undefined;
   private animationFrameId: number | null = null;
   private glContext: WebGL2RenderingContext | null = null;
@@ -28,19 +32,34 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private canvasElement!: HTMLCanvasElement;
   private frameCount: number = 0;
 
+  private animationPositions: Array<{ x: number; y: number }> = 
+  [{ x: 0.5, y: -1.0 }, { x: 0.5, y: 1.0 }, { x: -1.0, y: -1.0 }, { x: -1.0, y: 1.0 }];
+  private animationIndex: number = 0;
+  private transitionProgress: number = 0;
+  private transitionDuration: number = 360; // frames
+
+  private subscription: Subscription = new Subscription();
+
   @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
+  constructor(private renderer: Renderer2, private appService: AppService) {}
 
   ngOnInit() {
     document.body.style.setProperty('--fg-color', 'white');
     document.body.style.setProperty('--bg-color', 'black');
     
-    // Track mouse movement
     window.addEventListener('mousemove', this.onMouseMove.bind(this));
+
+    this.subscription.add(this.appService.isMobile$.subscribe(value => {
+      this.isMobile = value;
+    }));
+
+    this.subscription.add(this.appService.useMobileLayout$.subscribe(value => {
+      this.useMobileLayout = value;
+    }));
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit() {    
     const canvasEl = this.renderer.createElement('canvas');
     canvasEl.style.width = window.innerWidth + 'px';
     canvasEl.style.height = window.innerHeight + 'px';
@@ -48,11 +67,9 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.renderer.appendChild(this.canvasContainer.nativeElement, canvasEl);
     this.canvasElement = canvasEl;
     
-    // Wait for next frame to ensure canvas is in DOM with proper size
     requestAnimationFrame(() => {
       this.initThreeJS(canvasEl);
     });
-    // this.renderer.appendChild(this.canvasContainer.nativeElement, el);
 
     this.observer = new IntersectionObserver(
       (entries) => {
@@ -70,7 +87,6 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   },
   { threshold: 0.5 });
 
-    // Observe ONLY the about-content element
     const aboutContent = document.getElementById('about-content');
     if (aboutContent) {
       this.observer.observe(aboutContent);
@@ -78,10 +94,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.subscription.unsubscribe();
     this.observer?.disconnect();
     window.removeEventListener('mousemove', this.onMouseMove.bind(this));
     
-    // Clean up Three.js resources
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
     }
@@ -89,7 +105,6 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
       this.threeRenderer.dispose();
     }
     if (this.mesh) {
-      // Traverse the object and dispose of geometries and materials
       this.mesh.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           child.geometry.dispose();
@@ -106,7 +121,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private initThreeJS(canvas: HTMLCanvasElement) {
     const width = canvas.clientWidth || window.innerWidth;
     const height = canvas.clientHeight || window.innerHeight;
-    
+
     this.scene = new THREE.Scene();
     
     const aspect = width / height;
@@ -121,10 +136,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     );
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(0, 0, 0);
-    this.camera.zoom = 2.0;
+    const mobileZoom = Math.max(1.8, Math.min(3.0, height * 0.00375));
+    this.camera.zoom = this.useMobileLayout ? mobileZoom : 2.0;
     this.camera.updateProjectionMatrix();
     
-    // Create renderer
     this.threeRenderer = new THREE.WebGLRenderer({ 
       canvas: canvas,
       antialias: true,
@@ -133,30 +148,29 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.threeRenderer.setSize(width, height);
     this.threeRenderer.setPixelRatio(window.devicePixelRatio);
     
-    // Create render target for post-processing
-    this.renderTarget = new THREE.WebGLRenderTarget(width, height);
+    this.renderTarget = new THREE.WebGLRenderTarget(
+      width * window.devicePixelRatio, 
+      height * window.devicePixelRatio
+    );
     
-    // Setup post-processing scene
     this.postScene = new THREE.Scene();
     this.postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     
-    // Load shaders and character set
     Promise.all([
       fetch('/ascii/shader.vert').then(r => r.text()),
       fetch('/ascii/shader.frag').then(r => r.text()),
-      new THREE.TextureLoader().loadAsync('/ascii/ascii_charset_20x12_8_blue.png')
+      new THREE.TextureLoader().loadAsync(this.useMobileLayout ? '/ascii/ascii_charset_26x15_8_blue.png' : '/ascii/ascii_charset_20x12_8_blue.png')
     ]).then(([vertShader, fragShader, charSetTexture]) => {
       charSetTexture.minFilter = THREE.NearestFilter;
       charSetTexture.magFilter = THREE.NearestFilter;
       
-      // Create shader material
       this.shaderMaterial = new THREE.ShaderMaterial({
-        uniforms: {
+          uniforms: {
           tex: { value: this.renderTarget.texture },
           charSet: { value: charSetTexture },
           charSetLength: { value: 8 },
-          pixelWidth: { value: 12 },
-          pixelHeight: { value: 20 },
+          pixelWidth: { value: this.useMobileLayout ? 15 : 12 },
+          pixelHeight: { value: this.useMobileLayout ? 26 : 20 },
           resolution: { value: new THREE.Vector2(width * window.devicePixelRatio, height * window.devicePixelRatio) }
         },
         vertexShader: `
@@ -170,7 +184,6 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
         fragmentShader: fragShader.replace('uv.y = 1.0 - uv.y;', '')
       });
       
-      // Create fullscreen quad
       const quad = new THREE.Mesh(
         new THREE.PlaneGeometry(2, 2),
         this.shaderMaterial
@@ -178,24 +191,23 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
       this.postScene.add(quad);
     });
     
-    // Start rendering loop immediately
-    this.animate();
+    if (this.useMobileLayout) {
+      this.animateMobile();
+    } else {
+      this.animate();
+    }
     
-    // Add dramatic lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
     this.scene.add(ambientLight);
     
-    // Key light - very strong from top-front-right
     const keyLight = new THREE.DirectionalLight(0xffffff, 3.5);
     keyLight.position.set(100, 200, 200);
     this.scene.add(keyLight);
     
-    // Fill light - minimal from left
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-100, 10, 50);
     this.scene.add(fillLight);
     
-    // Rim light - strong from behind for edge definition
     const rimLight1 = new THREE.DirectionalLight(0xffffff, 5.0);
     rimLight1.position.set(-100, 50, -150);
     this.scene.add(rimLight1);
@@ -204,7 +216,6 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     rimLight2.position.set(100, 50, -150);
     this.scene.add(rimLight2);
     
-    // Load skull model
     const loader = new OBJLoader();
     loader.load(
       '/ascii/skull/source/skull.obj',
@@ -229,11 +240,9 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
         const scaleModifier = window.innerHeight < 768 ? 1.2 : 1.0;
         const scale = (100 / maxDim) * scaleModifier;
         
-        // First center the object at origin before scaling
         object.position.sub(center);
         object.scale.setScalar(scale);
         
-        // Move down slightly
         object.position.y -= 20;
         
         this.mesh = object;
@@ -242,9 +251,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
         addEventListener('resize', this.onResize.bind(this));
       },
       (xhr) => {
-        // Progress callback - suppress console logging
         const percent = xhr.lengthComputable ? (xhr.loaded / xhr.total * 100).toFixed(1) : 'unknown';
-        // Optionally show loading progress in UI instead of console
       },
       (error) => {
         console.error('Error loading skull:', error);
@@ -259,7 +266,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.canvasElement.style.width = newWidth + 'px';
     this.canvasElement.style.height = newHeight + 'px';
     this.threeRenderer.setSize(newWidth, newHeight);
-    this.renderTarget.setSize(newWidth, newHeight);
+    this.renderTarget.setSize(
+      newWidth * window.devicePixelRatio, 
+      newHeight * window.devicePixelRatio
+    );
     
     const aspect = newWidth / newHeight;
     const frustumSize = aspect < 1 ? 150 / aspect : 150;
@@ -267,14 +277,9 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.camera.right = frustumSize * aspect / 2;
     this.camera.top = frustumSize / 2;
     this.camera.bottom = frustumSize / -2;
-    this.camera.zoom = 2.0;
+    const mobileZoom = Math.max(1.8, Math.min(3.0, newHeight * 0.00375));
+    this.camera.zoom = this.useMobileLayout ? mobileZoom : 2.0;
     this.camera.updateProjectionMatrix();
-    
-    // Reposition mesh based on orientation
-    // if (this.mesh) {
-    //   const isMobile = newHeight > newWidth;
-    //   this.mesh.position.y = isMobile ? 0 : -10;
-    // }
           
     if (this.shaderMaterial) {
       this.shaderMaterial.uniforms['resolution'].value.set(
@@ -287,6 +292,49 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
   private onMouseMove(event: MouseEvent): void {
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
+  }
+
+  private animateMobile(): void {
+    this.animationFrameId = requestAnimationFrame(() => this.animateMobile());
+    
+    if (this.mesh) {
+      this.transitionProgress += 1;
+      if (this.transitionProgress >= this.transitionDuration) {
+        this.transitionProgress = 0;
+        this.animationIndex = (this.animationIndex + 1) % this.animationPositions.length;
+      }
+
+      const t = this.transitionProgress / this.transitionDuration;
+      const easedT = this.easeInOutCubic(t);
+
+      const currentPos = this.animationPositions[this.animationIndex];
+      const nextPos = this.animationPositions[(this.animationIndex + 1) % this.animationPositions.length];
+
+      const interpX = currentPos.x + (nextPos.x - currentPos.x) * easedT;
+      const interpY = currentPos.y + (nextPos.y - currentPos.y) * easedT;
+
+      const targetRotX = this.map(interpX, -1, 1, -Math.PI * 0.1, Math.PI * 0.1);
+      const targetRotY = this.map(interpY, -1, 1, -Math.PI * 0.2, Math.PI * 0.2);
+      
+      this.rotX = targetRotX;
+      this.rotY = targetRotY;
+      this.mesh.position.y = Math.sin(this.frameCount * 0.01) * 2 + 10;
+      this.mesh.rotation.y = this.rotY;
+      this.mesh.rotation.x = this.rotX;
+    }
+
+    const useShader = true;
+    
+    if (useShader && this.renderTarget && this.shaderMaterial) {
+      this.threeRenderer.setRenderTarget(this.renderTarget);
+      this.threeRenderer.render(this.scene, this.camera);
+      this.threeRenderer.setRenderTarget(null);
+      this.threeRenderer.render(this.postScene, this.postCamera);
+    } else {
+      this.threeRenderer.render(this.scene, this.camera);
+    }
+
+    this.frameCount++;
   }
 
   private animate(): void {
@@ -319,6 +367,10 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
 
   private map(value: number, start1: number, stop1: number, start2: number, stop2: number): number {
     return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+  }
+
+  private easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
   public getSpacerContent(): string {

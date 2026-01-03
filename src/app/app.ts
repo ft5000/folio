@@ -6,6 +6,7 @@ import { NavBar } from './components/nav-bar/nav-bar';
 import { filter, Observable, Subscription } from 'rxjs';
 import { NavLinks } from './components/nav-links/nav-links';
 import { SanityService } from './services/sanity';
+import { AppService } from './services/app';
 
 const mobileLayoutBreakpoint = 768;
 
@@ -28,7 +29,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
   public loading$: Observable<boolean> | null = null;
 
-  constructor(private router: Router, private sanityService: SanityService) {
+  constructor(private router: Router, private sanityService: SanityService, private appService: AppService) {
     this.loading$ = this.sanityService.loading$;
   }
 
@@ -39,6 +40,8 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+
+    this.appService.setIsMobile(this.isMobile);
     
     // Track route changes to force component reconstruction
     this.subscribers.add(
@@ -89,6 +92,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
   private checkUseMobileLayout(): void {
     this.useMobileLayout = window.innerWidth < mobileLayoutBreakpoint;
+    this.appService.setUseMobileLayout(this.useMobileLayout);
   }
   
 
