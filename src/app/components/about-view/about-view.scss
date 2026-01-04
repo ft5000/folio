@@ -5,6 +5,7 @@
     height: 200vh;
     overflow: hidden;
     display: flex;
+    opacity: 0;
     flex-direction: column;
     background-color: transparent;
     transition: 1s background-color ease;
@@ -14,6 +15,10 @@
     section {
         flex: 1;
     }
+}
+
+.about-view.ready {
+    opacity: 1;
 }
 
 .about-view.show-bg {
@@ -29,6 +34,12 @@
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
+    opacity: 0;
+}
+
+.canvas-container.ready {
+    animation: forwards fadeIn 1s ease;
+    opacity: 1;
 }
 
 .about-column {
@@ -134,9 +145,9 @@ pre {
     position: fixed;
     top: 0;
     left: 0;
-    // transform: translate(-50%, -50%);
+    min-width: 100vw;
+    min-height: 100vh;
     z-index: 0;
-    animation: forwards fadeIn 1s ease;
     transition: filter 1s ease;
 }
 

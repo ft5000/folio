@@ -1,5 +1,5 @@
-<div class="canvas-container" #canvasContainer></div>
-<div class="about-view">
+<div class="canvas-container" [class.ready]="!rendering" #canvasContainer></div>
+<div class="about-view" [class.ready]="!rendering">
     <section></section>
     <section id="about-content">
     <div class="about-column">

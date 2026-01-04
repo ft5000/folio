@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { P5PathsComponent } from './components/p5-paths.component';
 import { NavBar } from './components/nav-bar/nav-bar';
-import { filter, Observable, Subscription } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subscription } from 'rxjs';
 import { NavLinks } from './components/nav-links/nav-links';
 import { SanityService } from './services/sanity';
 import { AppService } from './services/app';
@@ -30,7 +30,12 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
   public loading$: Observable<boolean> | null = null;
 
   constructor(private router: Router, private sanityService: SanityService, private appService: AppService) {
-    this.loading$ = this.sanityService.loading$;
+    this.loading$ = combineLatest([
+      this.sanityService.loading$,
+      this.appService.loading$
+    ]).pipe(
+      map(([sanityLoading, appLoading]) => sanityLoading || appLoading)
+    );
   }
 
   ngOnDestroy(): void {
