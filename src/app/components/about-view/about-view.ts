@@ -156,8 +156,6 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
       width * window.devicePixelRatio, 
       height * window.devicePixelRatio
     );
-
-    // const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     
     this.postScene = new THREE.Scene();
     this.postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -165,7 +163,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     Promise.all([
       fetch('/ascii/shader.vert').then(r => r.text()),
       fetch('/ascii/shader.frag').then(r => r.text()),
-      new THREE.TextureLoader().loadAsync(`/ascii/ascii_charset_${this.isMobile ? '24x40' : '20x12'}_8_blue.png`)
+      new THREE.TextureLoader().loadAsync(`/ascii/ascii_charset_${this.useMobileLayout ? '24x40' : '20x12'}_8_blue.png`)
     ]).then(([vertShader, fragShader, charSetTexture]) => {
       charSetTexture.minFilter = THREE.NearestFilter;
       charSetTexture.magFilter = THREE.NearestFilter;
@@ -175,8 +173,8 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
           tex: { value: this.renderTarget.texture },
           charSet: { value: charSetTexture },
           charSetLength: { value: 8 },
-          pixelWidth: { value: this.isMobile ? 24 : 12 },
-          pixelHeight: { value: this.isMobile ? 40 : 20 },
+          pixelWidth: { value: this.useMobileLayout ? 24 : 12 },
+          pixelHeight: { value: this.useMobileLayout ? 40 : 20 },
           resolution: { value: new THREE.Vector2(width * window.devicePixelRatio, height * window.devicePixelRatio) }
         },
         vertexShader: `
