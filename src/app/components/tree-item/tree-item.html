@@ -1,6 +1,6 @@
 <div class="tree-item-container">
     <div class="tree-icon-container">
-        <i *ngIf="hasChildren" class="fas fa-chevron-right" [ngClass]="{'expanded': expanded}"></i>
+        <i *ngIf="hasChildren" class="fas" [ngClass]="expanded ? 'fa-minus' : 'fa-plus'"></i>
     </div>
     <a class="nav-item" [routerLink]="hasLink ? link : null" [ngClass]="{'active': isActive}" (click)="toggle()">{{ name }}</a>
 </div>

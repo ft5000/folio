@@ -7,13 +7,21 @@ import { combineLatest, filter, map, Observable, Subscription } from 'rxjs';
 import { NavLinks } from './components/nav-links/nav-links';
 import { SanityService } from './services/sanity';
 import { AppService } from './services/app';
+import { Background } from './components/background/background';
 
 const mobileLayoutBreakpoint = 768;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, P5PathsComponent, NavBar],
+  imports: [
+    RouterOutlet, 
+    CommonModule, 
+    P5PathsComponent, 
+    NavBar, 
+    NavLinks, 
+    Background
+  ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })

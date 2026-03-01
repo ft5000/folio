@@ -26,8 +26,8 @@ export class ImageCrawlView extends GridView implements OnInit {
   ngOnInit() {
     this.sanityService.getAllImages().subscribe((data: ImageDTO[]) => {
       this.images = data;
-      document.body.style.setProperty('--fg-color', 'white');
-      document.body.style.setProperty('--bg-color', 'black');
+      // document.body.style.setProperty('--fg-color', 'white');
+      // document.body.style.setProperty('--bg-color', 'black');
       this.setupItemObserver();
     });
   }

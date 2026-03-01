@@ -6,6 +6,14 @@
 <div class="site-container" style="display: flex; flex-direction: row;">
   <!-- <side-bar *ngIf="!useMobileLayout"></side-bar> -->
   <main class="main">
-    <router-outlet />
+    <div class="main-container">
+      <div class="nav-container">
+        <nav-links></nav-links>
+      </div>
+      <div class="router-container">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
   </main>
+  <background></background>
 </div>
