@@ -48,7 +48,6 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
     this.appService.setIsMobile(this.isMobile);
     
-    // Track route changes to force component reconstruction
     this.subscribers.add(
       this.router.events.pipe(
         filter(event => event instanceof NavigationEnd)

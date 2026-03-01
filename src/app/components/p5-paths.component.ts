@@ -107,7 +107,14 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
                     }
                     
                     cs = p.lerp(cs, this.hovering ? hs : nhs, 0.2);
+                    p.fill(255);
                     p.circle(p.mouseX, p.mouseY, cs);
+
+                    if (this.hovering) {
+                        p.erase();
+                        p.circle(p.mouseX, p.mouseY, cs * 0.9);
+                        p.noErase();
+                    }
                 };
             };
 

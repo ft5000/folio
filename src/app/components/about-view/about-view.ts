@@ -140,7 +140,8 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     );
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(0, 0, 0);
-    const mobileZoom = Math.max(1.8, Math.min(2.6, height * 0.00375));
+    const mobileZoom = Math.max(1.8, Math.min(2.4, height * 0.00375));
+    console.log('Mobile zoom:', this.useMobileLayout, mobileZoom);
     this.camera.zoom = this.useMobileLayout ? mobileZoom : 2.0;
     this.camera.updateProjectionMatrix();
     
@@ -163,7 +164,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     Promise.all([
       fetch('/ascii/shader.vert').then(r => r.text()),
       fetch('/ascii/shader.frag').then(r => r.text()),
-      new THREE.TextureLoader().loadAsync(`/ascii/ascii_charset_${this.useMobileLayout ? '24x40' : '20x12'}_8_blue.png`)
+      new THREE.TextureLoader().loadAsync(`/ascii/ascii_charset_${this.useMobileLayout ? '24x40' : '20x12'}_8_midgray.png`)
     ]).then(([vertShader, fragShader, charSetTexture]) => {
       charSetTexture.minFilter = THREE.NearestFilter;
       charSetTexture.magFilter = THREE.NearestFilter;
@@ -291,7 +292,7 @@ export class AboutView implements OnInit, OnDestroy, AfterViewInit {
     this.camera.right = frustumSize * aspect / 2;
     this.camera.top = frustumSize / 2;
     this.camera.bottom = frustumSize / -2;
-    const mobileZoom = Math.max(1.8, Math.min(3.0, newHeight * 0.00375));
+    const mobileZoom = Math.max(1.8, Math.min(2.6, newHeight * 0.00375));
     this.camera.zoom = this.useMobileLayout ? mobileZoom : 2.0;
     this.camera.updateProjectionMatrix();
           
