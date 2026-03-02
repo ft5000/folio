@@ -1,5 +1,5 @@
 <cursor *ngIf="!isMobile && !useMobileLayout"></cursor>
-<nav-bar></nav-bar>
+<nav-bar *ngIf="isMobile || useMobileLayout"></nav-bar>
 <span *ngIf="loading$ | async" class="loader"></span>
 <img class="arrow-down" [ngClass]="{'show': canScrollDown}" src="images/arrow_down_1.png"/>
 <div class="gradient" [ngClass]="{'show': canScrollDown && isMobile}"></div>
@@ -8,7 +8,9 @@
   <main class="main">
     <div class="main-container">
       <div class="nav-container">
-        <nav-links></nav-links>
+        <div style="width: 80%;">
+          <nav-links></nav-links>
+        </div>
       </div>
       <div class="router-container">
         <router-outlet></router-outlet>

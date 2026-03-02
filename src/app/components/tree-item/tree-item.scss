@@ -4,23 +4,15 @@
 .tree-item-container {
     display: flex;
     flex-direction: row;
-    color: white;
-    text-shadow: 0 0 2px white;
+    color: $text-color;
+    font-family: 'DIN', monospace;
+    font-size: 16px;
+    user-select: none;
+    // text-shadow: 0 0 5px $text-color;
 
     .tree-icon-container {
-        width: 1.5rem;
-        font-size: small;
-
-        i {
-            vertical-align: bottom;
-            transition: transform 0.1s ease;
-        }
-
-        i.expanded {
-            transform: rotate(90deg);
-        }
-
-
+        min-width: 16px;
+        text-align: center;
     }
 }
 
@@ -30,24 +22,26 @@
     border: none;
     outline: none;
     text-decoration: none;
-    color: white;
+    color: $text-color;
     display: inline-block;
     box-sizing: border-box;
-    line-height: 1.0; 
     user-select: none;
-    font-family: monospace;
-    font-size: 16px;
-    padding: 0.2rem 0.2rem;
+    width: 100%;
+    white-space: nowrap;
+
+    // span {
+    //     display: inline-block;
+    //     transform: translateY(-3px);
+    // }
 }
 
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    text-shadow: none;
+    background-color: color-mix(in srgb, $text-color, transparent 80%);
+    color: $text-color;
 }
 
 .nav-item.active {
-    text-decoration: underline;
+    background-color: color-mix(in srgb, $text-color, transparent 80%);
 }
 
 .sub-menu {

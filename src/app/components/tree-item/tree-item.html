@@ -1,8 +1,10 @@
 <div class="tree-item-container">
     <div class="tree-icon-container">
-        <i *ngIf="hasChildren" class="fas" [ngClass]="expanded ? 'fa-minus' : 'fa-plus'"></i>
+        <span *ngIf="hasChildren">{{ expanded ? '-' : '+' }}</span>
     </div>
-    <a class="nav-item" [routerLink]="hasLink ? link : null" [ngClass]="{'active': isActive}" (click)="toggle()">{{ name }}</a>
+    <a class="nav-item" [routerLink]="hasLink ? link : null" [ngClass]="{'active': isActive}" (click)="toggle()">
+        {{ displayName }}
+    </a>
 </div>
 <div *ngIf="hasChildren" class="sub-menu" [ngClass]="{'expanded': expanded}">
     <ul>

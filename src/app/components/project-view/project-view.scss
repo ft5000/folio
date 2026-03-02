@@ -8,8 +8,8 @@ $project-accent: var(--project-accent, black);
 
 
 ::selection {
-    background-color: $project-accent;
-    color: $project-bg;
+    background-color: color-mix(in srgb, $text-color 20%, transparent);
+    color: $text-color;
 }
 
 .text-container {
@@ -20,17 +20,14 @@ $project-accent: var(--project-accent, black);
 
 .project-column {
     display: flex;
-    flex-direction: row;
-    width: 100%;
+    flex-direction: column;
+    height: 100%;
     margin: auto;
-    font-family: 'Necto Mono', monospace;
-    justify-content: center;
-    background-color: $project-bg;
+    font-family: 'DIN', monospace;
+    padding: 0 0.5rem;
 
     .content-pane {
-        background-color: black;
         flex: 0.5;
-        overflow-y: scroll;
         min-height: fit-content;
 
         img {
@@ -46,19 +43,21 @@ $project-accent: var(--project-accent, black);
     }
 
     .text-pane {
-        flex: 0.5;
         top: 0;
         left: 0;
         color: $project-text;
-        font-size: 16px;
+        font-size: 14px;
+        width: 80%;
+        padding: 0 0.5rem;
 
         .text-heading {
             font-family: 'Coconat Regular', monospace;
-            color: $project-accent;
+            color: $text-color;
             
             h3 {
                 margin: 1rem 0;
-                font-size: 42px;
+                font-size: 32px;
+                font-family: 'DIN', monospace;
             }
         }
 
@@ -73,7 +72,7 @@ $project-accent: var(--project-accent, black);
 }
 
 .line {
-    border-bottom: 1px $project-text dashed; 
+    border-bottom: 1px color-mix(in srgb, $project-text 20%, transparent) dashed; 
     width: 100%;
     margin: 2rem 0;
 }
@@ -94,7 +93,7 @@ $project-accent: var(--project-accent, black);
 
     span {
         white-space: nowrap;
-        font-family: 'Coconat Regular', monospace;
+        font-family: 'DIN', monospace;
         padding: 0.2rem 0.5rem;
     }
 
@@ -116,7 +115,18 @@ span:has(.project-link) {
     display: flex;
     flex-direction: column;
     row-gap: 0.5rem;
-    padding: 0.5rem;
+    padding: 0 0.5rem;
+    flex: 1;
+
+    .project-images {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+
+    .project-images.show {
+        max-height: 1000px;
+    }
 }
 
 .image-header {
@@ -140,15 +150,28 @@ span:has(.project-link) {
     display: inline-block;
     box-sizing: border-box;
     line-height: 1.2; 
-    font-family: 'Necto Mono', monospace;
+    font-family: 'DIN', monospace;
     text-decoration: underline;
-    color: $project-text;
+    color: $text-color;
     transition: color 0.1s ease, background-color 0.1s ease;
 }
 
 .project-link:hover {
-    background-color: $project-text;
-    color: $project-bg;
+    background-color: color-mix(in srgb, $text-color 20%, transparent);
+    color: $text-color;
+}
+
+.btn-toggle {
+    all: unset;
+    display: inline-block;
+    box-sizing: border-box;
+    line-height: 1.2; 
+    font-family: 'DIN', monospace;
+    text-decoration: underline;
+    color: $text-color;
+    cursor: none;
+    transition: color 0.1s ease, background-color 0.1s ease;
+    margin-bottom: 1.5rem;
 }
 
 @media screen and (max-width: 768px) {
@@ -161,7 +184,6 @@ span:has(.project-link) {
     }
 
     .content-pane, .text-pane {
-        flex: 1;
         height: auto;
         position: relative !important;
     }

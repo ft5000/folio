@@ -1,5 +1,6 @@
 $bg-color: var(--bg-color, black);
 $fg-color: var(--fg-color, white);
+$text-color: var(--text-color, white);
 
 @font-face {
     font-family: 'Ronzino';
@@ -7,6 +8,21 @@ $fg-color: var(--fg-color, white);
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'Yapari Bold Extended';
+    src: url('../public/fonts/Conthrax-SemiBold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DIN';
+    src: url('../public/fonts/DIN Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 
 @font-face {
     font-family: 'ITC Avant Garde';
@@ -18,6 +34,13 @@ $fg-color: var(--fg-color, white);
 @font-face {
     font-family: 'Sinistre Dark';
     src: url('../public/fonts/Sinistre-Dark.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'F1 Regular';
+    src: url('../public/fonts/Formula1-Regular.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -159,17 +182,20 @@ main {
         height: 80vh;
         width: 80vw;
     }
+
     .main-container .nav-container {
         flex: 1;
         display: flex;
         flex-direction: row;
-        justify-content: start;
-    }
-    .main-container .router-container {
-        flex: 4;
-        overflow-y: auto;
+        justify-content: end;
     }
 
+    .main-container .router-container {
+        flex: 4;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        position: relative;
+    }
 }
 
 html, body {
@@ -181,15 +207,6 @@ html, body {
     cursor: none !important;
     font-family: 'ITC Avant Garde', sans-serif;
     overscroll-behavior-y: none;
-}
-
-* {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-*::-webkit-scrollbar {
-    display: none;
 }
 
 .blog-video {
@@ -205,11 +222,6 @@ html, body {
         display: block;
     }
 }
-
-// .blog-image:hover {
-//     transform: scale(0.975);
-//     opacity: 0.5;
-// }
 
 nav-bar {
     position: fixed;
@@ -263,6 +275,27 @@ nav-bar {
 
 .gradient.show {
     opacity: 1;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  border-radius: 0;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: color-mix(in srgb, transparent, $text-color 20%);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $text-color;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $text-color;
 }
 
 @media screen and (max-width: 768px) {

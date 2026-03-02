@@ -5,6 +5,7 @@ import { pass, texture, screenUV } from 'three/tsl';
 import { MeshBasicNodeMaterial } from 'three/webgpu';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import createWindowMaterial from './raindropMaterial.js';
+import { AppService } from '../../services/app.js';
 
 const bloomParams = {
     strength: 10.0,
@@ -32,8 +33,12 @@ export class Background implements OnInit, AfterViewInit {
     'background/cubemap/negz.jpg',
   ]);
 
+  constructor(private appService: AppService) {}
+
   ngOnInit() {
-    
+    setTimeout(() => {
+      this.appService.loading = true;
+    });
   }
 
 
@@ -52,7 +57,7 @@ export class Background implements OnInit, AfterViewInit {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 120;
+    camera.position.z = 100;
     scene.add(camera);
     scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
@@ -126,6 +131,14 @@ export class Background implements OnInit, AfterViewInit {
 
     addControls();
 
+    const onWindowResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener('resize', onWindowResize);
+
     function animate(renderer: WebGPURenderer) {
         requestAnimationFrame(() => animate(renderer));
         
@@ -137,6 +150,9 @@ export class Background implements OnInit, AfterViewInit {
     }
 
     animate(this.renderer);
-  }
 
+    setTimeout(() => {
+      this.appService.loading = false;
+    });
+  }
 }

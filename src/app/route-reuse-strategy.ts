@@ -17,6 +17,6 @@ export class NoReuseRouteStrategy implements RouteReuseStrategy {
   }
 
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
-    return false;
+    return future.routeConfig === curr.routeConfig;
   }
 }

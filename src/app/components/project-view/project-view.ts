@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { GridItem } from '../grid-item/grid-item';
 import { ImageDTO } from '../../../types/image';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Grid } from '../grid/grid';
 
 @Component({
   selector: 'app-project-view',
-  imports: [CommonModule, GridItem],
+  imports: [CommonModule, Grid, GridItem],
   templateUrl: './project-view.html',
   styleUrl: './project-view.scss',
   encapsulation: ViewEncapsulation.None,
@@ -23,6 +24,7 @@ export class ProjectView implements OnInit, AfterViewInit {
   public notFound: boolean = false;
   public tagsAppended: boolean = false;
   public isAnimating: boolean = false;
+  public showImages: boolean = true;
 
   private loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public loading$: Observable<boolean> = this.loading.asObservable();
@@ -75,10 +77,15 @@ export class ProjectView implements OnInit, AfterViewInit {
 
         if (project && project.images) {
           this.projectImages = project.images as ImageDTO[];
+          this.projectImages.push(this.headerImage as ImageDTO);
         }
         this.loading.next(false);
       });
     }
+  }
+
+  public toggleImages(): void {
+    this.showImages = !this.showImages;
   }
 
   private getProjectIdFromRoute(): string | null {
@@ -106,7 +113,7 @@ export class ProjectView implements OnInit, AfterViewInit {
         if (markDef) {
           switch (markDef._type) {
             case 'link':
-              text = `<a href="${markDef.href}" class="project-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
+              text = `<a href="${markDef.href}" class="project-link" target="_blank" rel="noopener noreferrer">${text.toUpperCase()}</a>`;
               break;
           }
         } else {

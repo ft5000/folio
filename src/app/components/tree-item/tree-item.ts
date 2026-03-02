@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChildren, Input, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, Input, OnDestroy, OnInit, QueryList } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -8,28 +8,36 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule, RouterModule],
   templateUrl: './tree-item.html',
   styleUrls: ['./tree-item.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TreeItem implements OnInit, OnDestroy {
   @Input() expanded: boolean = false;
   @Input() name: string = 'Item';
   @Input() link: string = '';
   isActive: boolean = false;
+  displayName: string = '';
 
   private subscriptions: Subscription = new Subscription();
 
   @ContentChildren(TreeItem, { descendants: true })
   children!: QueryList<TreeItem>;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
   
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
   ngOnInit() {
+    this.displayName = this.name.toUpperCase();
+    this.isActive = this.link.length > 0 && this.router.url.startsWith(this.link);
     this.subscriptions.add(this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.isActive = this.link.length > 0 && this.router.url.startsWith(this.link);
+        const active = this.link.length > 0 && this.router.url.startsWith(this.link);
+        if (active !== this.isActive) {
+          this.isActive = active;
+          this.cdr.markForCheck();
+        }
       }
     }));
   }
@@ -40,6 +48,7 @@ export class TreeItem implements OnInit, OnDestroy {
     if (!this.expanded) {
       this.collapseAllChildren();
     }
+    this.cdr.markForCheck();
   }
 
   public get hasChildren(): boolean {
