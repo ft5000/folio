@@ -13,6 +13,7 @@
     .tree-icon-container {
         min-width: 16px;
         text-align: center;
+        height: 100%;
     }
 }
 
@@ -41,7 +42,7 @@
 }
 
 .nav-item.active {
-    background-color: color-mix(in srgb, $text-color, transparent 80%);
+    background-color: color-mix(in srgb, $text-color, transparent 50%);
 }
 
 .sub-menu {

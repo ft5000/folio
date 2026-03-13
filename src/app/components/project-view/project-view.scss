@@ -14,17 +14,19 @@ $project-accent: var(--project-accent, black);
 
 .text-container {
     opacity: 0;
-    // padding: 3rem;
     padding-bottom: 3rem;
 }
 
 .project-column {
     display: flex;
     flex-direction: column;
+    width: 60%;
     height: 100%;
     margin: auto;
     font-family: 'DIN', monospace;
     padding: 0 0.5rem;
+    padding-top: 1.5rem;
+    animation: fadeIn 0.5s ease forwards;
 
     .content-pane {
         flex: 0.5;
@@ -47,18 +49,14 @@ $project-accent: var(--project-accent, black);
         left: 0;
         color: $project-text;
         font-size: 14px;
-        width: 80%;
+        width: 100%;
         padding: 0 0.5rem;
 
-        .text-heading {
-            font-family: 'Coconat Regular', monospace;
+        .text-heading h3 {
+            margin: 1rem 0;
             color: $text-color;
-            
-            h3 {
-                margin: 1rem 0;
-                font-size: 32px;
-                font-family: 'DIN', monospace;
-            }
+            font-size: 32px;
+            font-family: 'F1 Regular', monospace;
         }
 
         .text-body {
@@ -135,7 +133,7 @@ span:has(.project-link) {
     justify-content: center;
     aspect-ratio: 16/9;
     overflow: hidden;
-    animation: headerFadeIn 0.5s ease forwards;
+    // animation: headerFadeIn 0.5s ease forwards;
 }
 
 .image-header > img {

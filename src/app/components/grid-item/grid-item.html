@@ -1,8 +1,7 @@
 <div class="grid-item" [ngClass]="{'show': showDefault}" (mouseenter)="setHovered(true)" (mouseleave)="setHovered(false)" #gridItem>
     <img *ngIf="image"
         [src]="image.imageUrl"
-        [alt]="image.alt"
-        [ngStyle]="{'opacity':  hovered ? '0.5' : '1'}"/>
+        [alt]="image.alt"/>
     <video-container *ngIf="videoThumbnail; else videoBlock" [thumbnailDto]="videoThumbnail"></video-container>
     <ng-template #videoBlock>
         <video-container *ngIf="video" [data]="video"></video-container>

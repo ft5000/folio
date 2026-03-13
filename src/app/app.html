@@ -3,6 +3,13 @@
 <span *ngIf="loading$ | async" class="loader"></span>
 <img class="arrow-down" [ngClass]="{'show': canScrollDown}" src="images/arrow_down_1.png"/>
 <div class="gradient" [ngClass]="{'show': canScrollDown && isMobile}"></div>
+<!-- <div class="bar">
+  <div class="bg-select-container">
+    <button class="bg-btn" style="background-color: skyblue;"></button>
+    <button class="bg-btn" style="background-color: lightgreen;"></button>
+    <button class="bg-btn" style="background-color: lightgrey;"></button>
+  </div>
+</div> -->
 <div class="site-container" style="display: flex; flex-direction: row;">
   <!-- <side-bar *ngIf="!useMobileLayout"></side-bar> -->
   <main class="main">

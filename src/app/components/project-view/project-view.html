@@ -4,7 +4,7 @@
             <div class="text-pane">
                 <div class="text-container" style="position: relative;" [class.fade-in]="isAnimating">
                     <div class="text-heading">
-                        <h3>{{project.title.toUpperCase()}}</h3>
+                        <h3>{{project.title}}</h3>
                     </div>
                     <div class="text-body">
                         <ng-container *ngFor="let block of project?.description">
@@ -15,7 +15,7 @@
                             </p>
                         </ng-container>
                     </div>
-                    <!-- <div class="line"></div> -->
+                    <div class="line"></div>
                     <div style="position: absolute; bottom: 0;">
                         <div class="meta">
                             <ng-container *ngFor="let tag of project?.tags">
@@ -31,7 +31,7 @@
                     {{ showImages ? '- HIDE IMAGES' : '+ SHOW IMAGES' }}
                 </button>
                 <div class="project-images" [class.show]="showImages">
-                    <grid [maxCols]="3">
+                    <grid [maxCols]="2">
                         <ng-template *ngFor="let image of projectImages">
                             <grid-item [image]="image" [showDefault]="true" [showPublishDate]="false"></grid-item>
                         </ng-template>

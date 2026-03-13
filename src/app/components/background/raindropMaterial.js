@@ -98,7 +98,7 @@ export default function createWindowMaterial(bgTexture, cubemap) {
     material.emissiveNode = blurredbgTexture.pow(8).mul(2.0);
     // material.emissiveIntensity = 1.0;
     
-    material.envMapIntensity = 0.02;
+    material.envMapIntensity = 0.05;
     material.transparent = true;
     material.metalness = 0.5;
     material.roughness = 0.0;

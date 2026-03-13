@@ -26,10 +26,36 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
     constructor(private elementRef: ElementRef) {}
 
     ngAfterViewInit() {
-        this.mouseListener = addEventListener('mouseover', (event: MouseEvent) => {
-            this.hovering = !!(event.target as HTMLElement).closest('a, button, .grid-item');
+        this.mouseListener = addEventListener('mousemove', (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            const isOverInteractive = !!target.closest('a, button, .grid-item');
+            const isOverScrollbar = this.isOverScrollbar(event);
+            this.hovering = isOverInteractive || isOverScrollbar;
         });
         this.createSketch();
+    }
+
+    private isOverScrollbar(event: MouseEvent): boolean {
+        const target = event.target as HTMLElement;
+        if (!target) return false;
+
+        const hasVerticalScroll = target.scrollHeight > target.clientHeight;
+        const hasHorizontalScroll = target.scrollWidth > target.clientWidth;
+
+        if (!hasVerticalScroll && !hasHorizontalScroll) return false;
+
+        const rect = target.getBoundingClientRect();
+        const scrollbarWidth = 2;
+
+        if (hasVerticalScroll && event.clientX > rect.right - scrollbarWidth && event.clientX <= rect.right) {
+            return true;
+        }
+
+        if (hasHorizontalScroll && event.clientY > rect.bottom - scrollbarWidth && event.clientY <= rect.bottom) {
+            return true;
+        }
+
+        return false;
     }
 
     ngOnDestroy() {
@@ -47,8 +73,8 @@ export class P5PathsComponent implements OnDestroy, AfterViewInit {
                 let w: number;
                 let h: number;
                 let ts: number;
-                const hs = 42;
-                const nhs = 12;
+                const hs = 32;
+                const nhs = 8;
                 let cs = nhs;
 
                 p.setup = () => {
