@@ -205,7 +205,7 @@ html, body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: transparent;
+    background-color: black;
     transition: background-color 0.3s ease;
     cursor: none !important;
     font-family: 'ITC Avant Garde', sans-serif;
@@ -350,4 +350,12 @@ nav-bar {
     .grid-container {
         width: 100%;
     }
+
+    main {
+        .main-container {
+            height: 95vh;
+            width: 95vw;
+        }
+    }
 }
+

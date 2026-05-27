@@ -15,7 +15,8 @@
     margin-bottom: 1rem;
 
     svg {
-        transform: scale(0.8);
+        width: min(256px, 80%);
+        height: auto;
     }
 }
 
@@ -54,5 +55,12 @@ section {
             color: $text-color;
             background-color: color-mix(in srgb, $text-color 20%, transparent);
         }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .logo-container {
+        margin-top: 50%;
+        margin-bottom: 50%; 
     }
 }
