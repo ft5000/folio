@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { P5PathsComponent } from './components/p5-paths.component';
@@ -32,6 +32,8 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
   public currentRoute: string = '';
 
   private interval: any;
+
+  @ViewChild('routerContainer') routerContainer!: ElementRef<HTMLDivElement>;
 
   subscribers: Subscription = new Subscription();
 
@@ -114,10 +116,12 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const el = document.scrollingElement || document.documentElement;
-    const viewportHeight = window.visualViewport?.height ?? window.innerHeight ?? el.clientHeight;
-    const scrollTop = el.scrollTop ?? window.pageYOffset ?? 0;
-    const scrollHeight = el.scrollHeight ?? 0;
+    const el = this.routerContainer?.nativeElement;
+    if (!el) return;
+
+    const viewportHeight = el.clientHeight;
+    const scrollTop = el.scrollTop;
+    const scrollHeight = el.scrollHeight;
 
     const next = scrollTop + viewportHeight < scrollHeight - 1;
     if (next !== this.canScrollDown) this.canScrollDown = next;
@@ -125,5 +129,6 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     setTimeout(() => this.updateCanScrollDown(), 500);
+    this.routerContainer?.nativeElement.addEventListener('scroll', () => this.updateCanScrollDown());
   }
 }

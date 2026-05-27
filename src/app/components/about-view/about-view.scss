@@ -59,8 +59,12 @@ section {
 }
 
 @media screen and (max-width: 768px) {
+    .about-container {
+        padding-bottom: 50svh;
+    }
+
     .logo-container {
-        margin-top: 50%;
-        margin-bottom: 50%; 
+        min-height: 100svh;
+        align-items: center;
     }
 }

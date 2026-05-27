@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SanityService } from '../../services/sanity';
 import { Block, HeaderImageDTO, ProjectDTO } from '../../../types/project';
@@ -25,6 +25,8 @@ export class ProjectView implements OnInit, AfterViewInit {
   public tagsAppended: boolean = false;
   public isAnimating: boolean = false;
   public showImages: boolean = true;
+  private _imagesNaturalHeight: number = 0;
+  @ViewChild('imagesContainer') imagesContainer!: ElementRef<HTMLElement>;
 
   private loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public loading$: Observable<boolean> = this.loading.asObservable();
@@ -85,7 +87,33 @@ export class ProjectView implements OnInit, AfterViewInit {
   }
 
   public toggleImages(): void {
-    this.showImages = !this.showImages;
+    const el = this.imagesContainer.nativeElement;
+
+    if (!this.showImages) {
+      // EXPAND: use stored height so we don't read from a collapsed container
+      this.showImages = true;
+      el.style.transition = '';
+      el.style.height = '0';
+      void el.offsetHeight;
+      el.style.transition = 'height 0.4s ease';
+      el.style.height = this._imagesNaturalHeight + 'px';
+      el.addEventListener('transitionend', () => {
+        el.style.height = 'auto';
+        el.style.transition = '';
+      }, { once: true });
+    } else {
+      // COLLAPSE: measure while still open, store, then animate to 0
+      el.style.height = 'auto';
+      this._imagesNaturalHeight = el.scrollHeight;
+      el.style.height = this._imagesNaturalHeight + 'px';
+      void el.offsetHeight;
+      el.style.transition = 'height 0.4s ease';
+      el.style.height = '0';
+      el.addEventListener('transitionend', () => {
+        this.showImages = false;
+        el.style.transition = '';
+      }, { once: true });
+    }
   }
 
   private getProjectIdFromRoute(): string | null {

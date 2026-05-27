@@ -15,13 +15,10 @@
                             </p>
                         </ng-container>
                     </div>
-                    <!-- <div class="line"></div> -->
-                    <div style="position: absolute; bottom: 0;">
-                        <div class="meta">
-                            <ng-container *ngFor="let tag of project?.tags">
-                                <span>{{tag.toUpperCase()}}</span>
-                            </ng-container>
-                        </div>
+                    <div class="meta">
+                        <ng-container *ngFor="let tag of project?.tags">
+                            <span>{{tag.toUpperCase()}}</span>
+                        </ng-container>
                     </div>
                 </div>
             </div>
@@ -30,7 +27,7 @@
                 <button class="btn-toggle" (click)="toggleImages()">
                     {{ showImages ? '- HIDE IMAGES' : '+ SHOW IMAGES' }}
                 </button>
-                <div class="project-images" [class.show]="showImages">
+                <div class="project-images" #imagesContainer>
                     <grid [maxCols]="2">
                         <ng-template *ngFor="let image of projectImages">
                             <grid-item [image]="image" [showDefault]="true" [showPublishDate]="false"></grid-item>
@@ -38,6 +35,14 @@
                     </grid>
                 </div>
             </div>
+            <!-- <div class="line"></div>
+            <div>
+                <div class="meta">
+                    <ng-container *ngFor="let tag of project?.tags">
+                        <span>{{tag.toUpperCase()}}</span>
+                    </ng-container>
+                </div>
+            </div> -->
         </ng-container>
     </div>
 </ng-container>
