@@ -7,7 +7,7 @@ import { combineLatest, filter, map, Observable, Subscription } from 'rxjs';
 import { NavLinks } from './components/nav-links/nav-links';
 import { SanityService } from './services/sanity';
 import { AppService } from './services/app';
-import { Background } from './components/background/background';
+// import { Background } from './components/background/background';
 
 const mobileLayoutBreakpoint = 768;
 
@@ -20,7 +20,7 @@ const mobileLayoutBreakpoint = 768;
     P5PathsComponent, 
     NavBar, 
     NavLinks, 
-    Background
+    // Background
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
