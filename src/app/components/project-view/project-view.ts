@@ -48,11 +48,6 @@ export class ProjectView implements OnInit, AfterViewInit {
       this.load();
       })
     );
-    this.subscribers.add(this.loading$.subscribe((isLoading) => {
-      if (!isLoading && this.project) {
-        this.setColorScheme(this.project.bgColor, this.project.textColor, this.project.accentColor);
-      }
-    }));
   }
 
   private load(): void {

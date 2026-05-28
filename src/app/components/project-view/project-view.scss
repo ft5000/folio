@@ -1,12 +1,5 @@
 @import '../../../styles.scss';
 
-$project-bg: var(--project-bg, white);
-$project-text: var(--project-text, black);
-$project-accent: var(--project-accent, black);
-
-
-
-
 ::selection {
     background-color: color-mix(in srgb, $text-color 20%, transparent);
     color: $text-color;
@@ -46,17 +39,15 @@ $project-accent: var(--project-accent, black);
     .text-pane {
         top: 0;
         left: 0;
-        color: $project-text;
+        color: $fg-color;
         font-size: 14px;
         width: 100%;
-        // padding: 0 0.5rem;
         box-sizing: border-box;
 
         .text-heading h3 {
             margin: 1rem 0;
-            color: $text-color;
+            color: $fg-color;
             font-size: 32px;
-            // font-family: 'F1 Regular', monospace;
         }
 
         .text-body {
@@ -75,7 +66,7 @@ $project-accent: var(--project-accent, black);
     margin: 2rem 0;
 }
 
- .fade-in {
+.fade-in {
     animation: fadeIn 0.5s ease forwards;
     animation-delay: 0.5s;
 }
@@ -87,12 +78,16 @@ $project-accent: var(--project-accent, black);
     justify-content: flex-start;
     font-size: 9pt;
     margin: 0.5rem 0rem;
-    color: $project-text;
+    color: $fg-color;
 
     span {
         white-space: nowrap;
         font-family: 'DIN', monospace;
         padding: 0.2rem 0.5rem;
+    }
+
+    span:first-child {
+        padding-left: 0;
     }
 
     span:not(:first-child)::before {
@@ -169,16 +164,11 @@ span:has(.project-link) {
         flex-direction: column;
         width: 100%;
         height: auto;
-        padding-bottom: 10svh;
     }
 
     .content-pane, .text-pane {
         height: auto;
         position: relative !important;
-    }
-
-    .text-container {
-        padding: 0 1rem;
     }
 }
 
