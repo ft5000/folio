@@ -1,5 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { NoReuseRouteStrategy } from './route-reuse-strategy';
 
 import { routes } from './app.routes';
@@ -9,6 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    { provide: RouteReuseStrategy, useClass: NoReuseRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: NoReuseRouteStrategy },
+    provideAnimations()
   ]
 };

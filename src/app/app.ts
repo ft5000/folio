@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { P5PathsComponent } from './components/p5-paths.component';
 import { NavBar } from './components/nav-bar/nav-bar';
@@ -23,7 +24,15 @@ const mobileLayoutBreakpoint = 768;
     // Background
   ],
   templateUrl: './app.html',
-  styleUrls: ['./app.scss']
+  styleUrls: ['./app.scss'],
+  animations: [
+    trigger('routeFadeIn', [
+      transition('* => *', [
+        style({ opacity: 0 }),
+        animate('300ms ease-in', style({ opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class App implements OnInit, AfterViewInit, OnDestroy {
   public isMobile: boolean = false;
