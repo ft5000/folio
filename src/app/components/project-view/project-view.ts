@@ -70,11 +70,11 @@ export class ProjectView implements OnInit, AfterViewInit {
           this.isAnimating = true;
         }, 50);
         
-        this.headerImage = project.headerImage as HeaderImageDTO;
+        this.headerImage = project.headerImage ?? null;
+        console.log('[ProjectView] headerImage:', this.headerImage);
 
         if (project && project.images) {
           this.projectImages = project.images as ImageDTO[];
-          this.projectImages.push(this.headerImage as ImageDTO);
         }
         this.loading.next(false);
       });

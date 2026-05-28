@@ -302,6 +302,40 @@ nav-bar {
     opacity: 1;
 }
 
+section {
+    color: $text-color;
+    font-family: 'DIN', monospace;
+
+    h3 {
+        font-size: 14px;
+        font-weight: normal;
+        margin: 1rem 0;
+    }
+
+    .section-body {
+        border-top: 1px dashed $text-color;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .link-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 1rem;
+
+        a {
+            all: unset;
+            cursor: none;
+        }
+
+        a:hover {
+            color: $text-color;
+            background-color: color-mix(in srgb, $text-color 20%, transparent);
+        }
+    }
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 2px;

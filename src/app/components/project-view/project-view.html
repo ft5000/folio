@@ -1,48 +1,45 @@
 <ng-container *ngIf="project">
     <div class="project-column">
         <ng-container *ngIf="!(loading$ | async)">
-            <div class="text-pane">
-                <div class="text-container" style="position: relative;" [class.fade-in]="isAnimating">
-                    <div class="text-heading">
-                        <h3>{{project.title}}</h3>
-                    </div>
-                    <div class="text-body">
-                        <ng-container *ngFor="let block of project?.description">
-                            <p *ngIf="block._type === 'block'">
-                                <ng-container *ngFor="let child of block.children">
-                                    <span [innerHTML]="renderSpan(child, block)"></span>
-                                </ng-container>
-                            </p>
-                        </ng-container>
-                    </div>
-                    <div class="meta">
-                        <ng-container *ngFor="let tag of project?.tags">
-                            <span>{{tag.toUpperCase()}}</span>
-                        </ng-container>
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="projectImages && projectImages.length > 0" class="image-container">
-                <div class="line"></div>
-                <button class="btn-toggle" (click)="toggleImages()">
-                    {{ showImages ? '- HIDE IMAGES' : '+ SHOW IMAGES' }}
-                </button>
-                <div class="project-images" #imagesContainer>
-                    <grid [maxCols]="2">
-                        <ng-template *ngFor="let image of projectImages">
-                            <grid-item [image]="image" [showDefault]="true" [showPublishDate]="false"></grid-item>
-                        </ng-template>
-                    </grid>
-                </div>
-            </div>
-            <!-- <div class="line"></div>
-            <div>
-                <div class="meta">
-                    <ng-container *ngFor="let tag of project?.tags">
-                        <span>{{tag.toUpperCase()}}</span>
-                    </ng-container>
-                </div>
+            <!-- <div *ngIf="headerImage?.imageUrl" class="image-header">
+                <img [src]="headerImage!.imageUrl" [alt]="project.title" />
             </div> -->
+            <div class="text-container" [class.fade-in]="isAnimating">
+                <section>
+                    <h3>{{project.title.toUpperCase()}}</h3>
+                    <div class="section-body">
+                        <div class="text-body">
+                            <ng-container *ngFor="let block of project?.description">
+                                <p *ngIf="block._type === 'block'">
+                                    <ng-container *ngFor="let child of block.children">
+                                        <span [innerHTML]="renderSpan(child, block)"></span>
+                                    </ng-container>
+                                </p>
+                            </ng-container>
+                        </div>
+                        <div class="meta">
+                            <ng-container *ngFor="let tag of project?.tags">
+                                <span>{{tag.toUpperCase()}}</span>
+                            </ng-container>
+                        </div>
+                    </div>
+                </section>
+                <section *ngIf="projectImages && projectImages.length > 0" class="image-container">
+                    <h3>MEDIA</h3>
+                    <div class="section-body">
+                        <button class="btn-toggle" (click)="toggleImages()">
+                            {{ showImages ? '- HIDE IMAGES' : '+ SHOW IMAGES' }}
+                        </button>
+                        <div class="project-images" #imagesContainer>
+                            <grid [maxCols]="2">
+                                <ng-template *ngFor="let image of projectImages">
+                                    <grid-item [image]="image" [showDefault]="true" [showPublishDate]="false"></grid-item>
+                                </ng-template>
+                            </grid>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </ng-container>
     </div>
 </ng-container>
