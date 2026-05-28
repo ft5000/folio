@@ -1,7 +1,7 @@
 <div class="sketches-container">
     <ng-container *ngIf="!(loading$ | async)">
         <div class="grid-container">
-            <grid [maxCols]="3">
+            <grid [maxCols]="2">
                 <ng-template *ngFor="let thumb of thumbnails">
                     <grid-item [videoThumbnail]="thumb" [showPublishDate]="false" [showDefault]="false"></grid-item>
                 </ng-template>

@@ -120,29 +120,7 @@ background {
     overflow: hidden;
 }
 
-nav {
-    border-right: 1px dashed $fg-color;
-    background-color: $bg-color;
-    flex: 0.1; 
-    height: 100vh;
-    font-family: monospace;
-    position: sticky;
-    min-width: 192px;
-    color: $fg-color;
-    top: 0;
-    left: 0;
-
-    .nav-links {
-        margin-top: 1rem;
-        margin-left: 0.5rem;
-    }
-}
-
 .nav-top {
-    // background-color: $fg-color;
-    // color: $bg-color;
-    // padding: 0.3rem;
-    // text-align: center;
     display: flex;
     flex-direction: row;
     font-size: 10pt;
@@ -196,8 +174,6 @@ main {
         overflow-x: hidden;
         position: relative;
         box-sizing: border-box;
-        // background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent 50%);
-        // margin-left: 2px;
     }
 }
 
@@ -210,6 +186,7 @@ html, body {
     cursor: none !important;
     font-family: 'ITC Avant Garde', sans-serif;
     overscroll-behavior-y: none;
+    overscroll-behavior: none
 }
 
 .blog-video {
@@ -353,8 +330,8 @@ nav-bar {
 
     main {
         .main-container {
-            height: 95vh;
-            width: 95vw;
+            height: 100vh;
+            width: 100vw;
         }
     }
 }
