@@ -72,7 +72,9 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
         filter(event => event instanceof NavigationEnd)
       ).subscribe((event: NavigationEnd) => {
         this.currentRoute = event.urlAfterRedirects;
-        scrollTo(0, 0);
+        if (this.routerContainer?.nativeElement) {
+          this.routerContainer.nativeElement.scrollTop = 0;
+        }
       })
     );
 
