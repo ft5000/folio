@@ -23,7 +23,6 @@ export class ProjectView implements OnInit, AfterViewInit {
   public projectImages: ImageDTO[] = [];
   public notFound: boolean = false;
   public tagsAppended: boolean = false;
-  public isAnimating: boolean = false;
   public showImages: boolean = true;
   private _imagesNaturalHeight: number = 0;
   @ViewChild('imagesContainer') imagesContainer!: ElementRef<HTMLElement>;
@@ -52,7 +51,6 @@ export class ProjectView implements OnInit, AfterViewInit {
 
   private load(): void {
     this.loading.next(true);
-    this.isAnimating = false;
 
     const id = this.getProjectIdFromRoute();
     this.projectTitle = id ? this.formatTitleFromId(id) : null;
@@ -65,13 +63,8 @@ export class ProjectView implements OnInit, AfterViewInit {
           return;
         }
         this.project = project;
-        
-        setTimeout(() => {
-          this.isAnimating = true;
-        }, 50);
-        
+
         this.headerImage = project.headerImage ?? null;
-        console.log('[ProjectView] headerImage:', this.headerImage);
 
         if (project && project.images) {
           this.projectImages = project.images as ImageDTO[];

@@ -3,72 +3,8 @@ $fg-color: var(--fg-color, white);
 $text-color: var(--text-color, white);
 
 @font-face {
-    font-family: 'Ronzino';
-    src: url('../public/fonts/Ronzino-Regular.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Yapari Bold Extended';
-    src: url('../public/fonts/Conthrax-SemiBold.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
     font-family: 'DIN';
     src: url('../public/fonts/DIN Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-
-@font-face {
-    font-family: 'ITC Avant Garde';
-    src: url('../public/fonts/ITCAvantGardeStd-Md.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Sinistre Dark';
-    src: url('../public/fonts/Sinistre-Dark.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'F1 Regular';
-    src: url('../public/fonts/Formula1-Regular.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Necto Mono';
-    src: url('../public/fonts/NectoMono-Regular.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Karrik Regular';
-    src: url('../public/fonts/Karrik-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Coconat Regular';
-    src: url('../public/fonts/Coconat-Regular.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Nimbus Sans Regular';
-    src: url('../public/fonts/NimbusSanL-Reg.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -364,8 +300,8 @@ section {
 
     main {
         .main-container {
-            height: 100vh;
-            width: 100vw;
+            height: 100dvh;
+            width: 100dvw;
         }
     }
 }
