@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -6,7 +6,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
 const POST_SHADER = {
-  uniforms: { tDiffuse: { value: null }, uTime: { value: 0.0 }, uInertia: { value: 0.0 } },
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0.0 }, uInertia: { value: 0.0 }, uIsMobile: { value: 0 } },
   vertexShader: `
     varying vec2 vUv;
     void main() {
@@ -18,6 +18,7 @@ const POST_SHADER = {
     uniform sampler2D tDiffuse;
     uniform float uTime;
     uniform float uInertia;
+    uniform float uIsMobile;
     varying vec2 vUv;
 
     vec2 hash2(vec2 p) {
@@ -40,9 +41,9 @@ const POST_SHADER = {
 
     void main() {
       // Three fixed band sizes
-      float ps1 = 0.0001;
-      float ps2 = 0.005;
-      float ps3 = 0.05;
+      float ps1 = uIsMobile > 0.5 ? 0.0001  : 0.004;
+      float ps2 = uIsMobile > 0.5 ? 0.005   : 0.008;
+      float ps3 = uIsMobile > 0.5 ? 0.05    : 0.016;
 
       float n1 = pow(gnoise(vec2(floor(vUv.x / ps1) * ps1, vUv.y + uTime * 0.3) * 4.0) * 0.5 + 0.5, 2.0);
       float n2 = pow(gnoise(vec2(floor(vUv.x / ps2) * ps2, vUv.y + uTime * 0.2) * 4.0) * 0.5 + 0.5, 2.0);
@@ -84,6 +85,8 @@ const POST_SHADER = {
 export class LogoComponent implements AfterViewInit, OnDestroy {
   @ViewChild('sceneContainer', { static: true }) sceneContainer!: ElementRef<HTMLDivElement>;
 
+  @Input() public isMobile: boolean = false;
+
   private scene!: THREE.Scene;
   private camera!: THREE.OrthographicCamera;
   private renderer!: THREE.WebGLRenderer;
@@ -95,6 +98,7 @@ export class LogoComponent implements AfterViewInit, OnDestroy {
   private currentRotationY = 0;
   private mouseMoveHandler!: (e: MouseEvent) => void;
   private touchMoveHandler!: (e: TouchEvent) => void;
+  private touchActive = false;
   private composer!: EffectComposer;
   private shaderPass!: ShaderPass;
   private clock = new THREE.Clock();
@@ -172,8 +176,11 @@ export class LogoComponent implements AfterViewInit, OnDestroy {
       const touchY = -(touch.clientY / window.innerHeight) * 2 + 1;
       this.targetRotationY = touchX * 1.2;
       this.targetRotationX = touchY * 0.6;
+      this.touchActive = true;
     };
     window.addEventListener('touchmove', this.touchMoveHandler, { passive: true });
+    window.addEventListener('touchend', () => { this.touchActive = false; });
+    window.addEventListener('touchcancel', () => { this.touchActive = false; });
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
@@ -228,8 +235,13 @@ export class LogoComponent implements AfterViewInit, OnDestroy {
 
     const elapsed = this.clock.getElapsedTime();
     this.shaderPass.uniforms['uTime'].value = elapsed;
+    this.shaderPass.uniforms['uIsMobile'].value = this.isMobile ? 1 : 0;
 
     if (this.fbxModel) {
+      if (this.isMobile && !this.touchActive) {
+        this.targetRotationX += (0 - this.targetRotationX) * 0.05;
+        this.targetRotationY += (0 - this.targetRotationY) * 0.05;
+      }
       const dY = this.targetRotationY - this.currentRotationY;
       const dX = this.targetRotationX - this.currentRotationX;
       this.currentRotationY += Math.abs(dY) > 0.0001 ? dY * 0.2 : dY;
@@ -242,7 +254,6 @@ export class LogoComponent implements AfterViewInit, OnDestroy {
       const speed = velX + velY;
       this.inertia += (speed * 0.5 - this.inertia) * 0.1;
       if (this.inertia < 0.000001) this.inertia = 0;
-      console.log(this.inertia);
       this.shaderPass.uniforms['uInertia'].value = this.inertia;
 
       this.prevRotationX = this.currentRotationX;

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LogoComponent } from '../logo/logo.component';
+import { AppService } from '../../services/app';
 
 @Component({
   selector: 'app-about-view',
@@ -8,9 +9,16 @@ import { LogoComponent } from '../logo/logo.component';
   templateUrl: './about-view.html',
   styleUrl: './about-view.scss',
 })
-export class AboutView {
+export class AboutView implements OnInit {
+  public isMobile: boolean = false;
 
-  constructor() {}
+  constructor(private appService: AppService) {}
+
+  ngOnInit(): void {
+    this.appService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });
+  }
 
   public getSpacerContent(): string {
     return ' ';
