@@ -107,7 +107,7 @@ main {
     .main-container .router-container {
         flex: 4;
         overflow-y: scroll;
-        overflow-x: hidden;
+        overflow-x: clip;
         position: relative;
         box-sizing: border-box;
     }
